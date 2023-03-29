@@ -2,7 +2,7 @@
     import Player from './Player.svelte';
   
       let playerList = [4];
-    let activePlayerIndex = -1;
+      let activePlayerIndex = -1;
     
       function handleMessage(event) {
           let playerIndex = event.detail.index;
