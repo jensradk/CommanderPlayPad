@@ -3,7 +3,7 @@
 
   export let name;
   export let index;
-  export let lifeTotal = 2; //40;
+  export let lifeTotal = 40;
   export let activeTimer = false;
   export let timeRemaining = 23 * 60;
   export let isDead = false;
