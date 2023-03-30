@@ -83,14 +83,14 @@
 </script>
 
 <div class={className}>
-  <h2 on:click={clicked} on:keypress={clicked}>{name}</h2>
+  <div class="player-name" on:click={clicked} on:keypress={clicked}>{name}</div>
   <div class="life-total">
     <button
       on:click={() => {
         addToLife(-1);
       }}>−</button
     >
-    <h1>{lifeTotal}</h1>
+    <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
     <button
       on:click={() => {
         addToLife(1);
@@ -108,9 +108,10 @@
 </div>
 
 <style>
-  h2 {
+  .player-name {
     width: 100%;
     text-align: center;
+    font-size: 1.5rem;
   }
 
   .resetbutton {
@@ -125,24 +126,21 @@
     align-items: center;
     justify-content: center;
     margin: 5px;
-    border: 2mm ridge rgba(63, 63, 63, 0.6);
+    border: 10px;
+    border: 2px solid rgba(63, 63, 63, 0.6);
+    border-radius: 10px;
   }
 
   .active-player {
-    background-color: rgb(4, 109, 39);
-    -webkit-animation: pulse_opacity 10s infinite ease-in-out;
-    -o-animation: pulse_opacity 10s infinite ease-in-out;
-    -ms-animation: pulse_opacity 10s infinite ease-in-out;
-    -moz-animation: pulse_opacity 10s infinite ease-in-out;
-    animation: pulse_opacity 10s infinite ease-in-out;
+    background-color: rgb(17, 87, 40);
   }
 
   .inactive-player {
-    background-color: lightgrey;
+    background-color: rgb(80, 79, 79);
   }
 
   .dead-player {
-    background-color: rgb(99, 32, 32);
+    background-color: rgb(59, 18, 18);
   }
 
   .upside-down {
@@ -153,55 +151,44 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    flex: 1;
   }
 
   .life-total button {
     font-size: 2rem;
+    width: 25%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 10px;
+    opacity: 0.5;
   }
 
   .life-total h1 {
-    font-size: 6rem;
-    margin: 0 2rem;
+    font-size: 8rem;
+    width: 50%;
+    height: 100%;
+    text-align: center;
+    margin: 0px;
+    vertical-align: middle;
   }
 
   .timer {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
-    background: grey;
+    background: rgba(128, 128, 128, 0.5);
     width: 100%;
+    border-radius: 5px;
+    background: #00000000;
   }
 
   .timer button {
-    margin: 0rem 0rem 0rem 0rem;
+    margin: 0px;
   }
 
   .time-remaining {
-    font-size: 4rem;
-  }
-
-  @-webkit-keyframes pulse_opacity {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-
-  @keyframes pulse_opacity {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
-    100% {
-      opacity: 1;
-    }
+    font-size: 5rem;
   }
 </style>
