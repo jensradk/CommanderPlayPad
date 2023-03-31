@@ -84,26 +84,26 @@
 <style>
   .player-field {
     font-family: sans-serif;
-    color:  #ffc102;
-    width: 100% - 20px;
-    height: 100% - 20px;
+    color:  #dda600;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 5px;
-    border: 10px;
     border: 2px solid rgba(63, 63, 63, 0.6);
     border-radius: 10px;
   }
 
   .active-player.alive-player {
-    background-color: #ffc102;
+    background-color: #dda600;
     color: black;
   }
 
   .inactive-player.alive-player {
     background-color: #403001;
+  }
+
+  .active-player {
+    scale: 0.999;
   }
 
   .dead-player {

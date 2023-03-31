@@ -43,7 +43,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 0px;
+    gap: 10px;
     width: 100vw;
     height: 100vh;
   }
