@@ -1,9 +1,9 @@
 <script>
     import Player from './Player.svelte';
-  
+
       let playerList = [4];
       let activePlayerIndex = -1;
-    
+
       function handleMessage(event) {
           let playerIndex = event.detail.index;
           if (activePlayerIndex == -1) {
@@ -20,26 +20,47 @@
               playerList[activePlayerIndex].startTimer();
           }
       }
-      
+
   </script>
-  
+
   <div class="grid">
     <Player
-        name="Player 1"
-          index=0
-          bind:this={playerList[0]}
-          on:message={handleMessage}
-      />
-    <Player name="Player 2" index=1 bind:this={playerList[1]} on:message={handleMessage}/>
-      <Player name="Player 3" index=2 bind:this={playerList[2]} on:message={handleMessage}/>
-      <Player name="Player 4" index=3 bind:this={playerList[3]} on:message={handleMessage}/>
+      name="Player 1"
+      index=0
+      baseClass="player upside"
+      bind:this={playerList[0]}
+      on:message={handleMessage}/>
+    <Player
+      name="Player 2"
+      index=1
+      baseClass="player upside"
+      bind:this={playerList[1]}
+      on:message={handleMessage}/>
+    <Player
+      name="Player 3"
+      index=2
+      baseClass="player"
+      bind:this={playerList[2]}
+      on:message={handleMessage}/>
+    <Player
+      name="Player 4"
+      index=3
+      baseClass="player"
+      bind:this={playerList[3]}
+      on:message={handleMessage}/>
   </div>
-  
+
   <style>
     .grid {
       display: grid;
+      grid-auto-flow: row;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(2, 1fr);
       gap: 0px;
+      height: 98vh;
+      padding: 0px;
+      margin: 0px;
+      border: 0px;
     }
+
   </style>
