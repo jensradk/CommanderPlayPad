@@ -58,7 +58,7 @@
   }
 </script>
 
-  <div class="{baseClass} {statusClass} {activeClass}">
+  <div class="{baseClass} {statusClass} {activeClass} unselectable">
   <div class="life-total">
     <button
       on:click={() => {
@@ -163,4 +163,13 @@
     font-size: 10vh;
     margin-right: 0rem;
   }
+
+  .unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 </style>
