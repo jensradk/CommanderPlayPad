@@ -42,7 +42,7 @@
     activeTimer = false;
     clearInterval(intervalId);
     timeRemaining = 23 * 60;
-    statusClass = 'alive'
+    statusClass = 'alive-player'
     activeClass = 'inactive-player';
     lifeTotal = 40;
   }
