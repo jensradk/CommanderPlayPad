@@ -6,9 +6,9 @@
   export let lifeTotal = 40;
   export let activeTimer = false;
   export let timeRemaining = 23 * 60;
-  export let isDead = false;
-  export let isUpsideDown = false;
-  export let className = "player-field inactive-player";
+  export let baseClass;
+  export let statusClass = 'alive-player';
+  export let activeClass = 'inactive-player';
 
   const dispatch = createEventDispatcher();
 
@@ -28,62 +28,39 @@
           stopTimer();
         }
       }, 1000);
-      className = createClassName();
+      activeClass = 'active-player';
     }
   }
 
   export function stopTimer() {
     activeTimer = false;
     clearInterval(intervalId);
-    className = createClassName();
+    activeClass = 'inactive-player';
   }
 
   export function resetTimer() {
     activeTimer = false;
     clearInterval(intervalId);
     timeRemaining = 23 * 60;
-    isDead = false;
+    statusClass = 'alive'
+    activeClass = 'inactive-player';
     lifeTotal = 40;
-    className = createClassName();
   }
 
   function addToLife(value) {
     lifeTotal = Math.max(0, lifeTotal + value);
     if (lifeTotal <= 0) {
-      isDead = true;
-      stopTimer();
+        statusClass = 'dead-player'
+        stopTimer();
     } else if (lifeTotal > 0) {
-      isDead = false;
+        statusClass = 'alive-player'
     }
-    className = createClassName();
     return lifeTotal;
   }
-
-  function createClassName() {
-    className = "player-field";
-    if (isDead) {
-      className += " dead-player";
-    } else {
-      if (activeTimer) {
-        className += " active-player";
-      } else {
-        className += " inactive-player";
-      }
-    }
-    if (isUpsideDown) {
-      className += " upside-down";
-    }
-    return className;
-    console.log("className: " + className);
-  }
-
-  onMount(() => {
-    className = createClassName();
-  });
 </script>
 
-<div class={className}>
-  <div class="player-name" on:click={clicked} on:keypress={clicked}>{name}</div>
+  <div class="{baseClass} {statusClass} {activeClass}">
+  <!--<div class="player-name" on:click={clicked} on:keypress={clicked}>{name}</div>-->
   <div class="life-total">
     <button
       on:click={() => {
@@ -112,13 +89,15 @@
     width: 100%;
     text-align: center;
     font-size: 1.5rem;
-  }
+ }
 
   .resetbutton {
     alignment: right;
   }
 
   .player-field {
+    font-family: sans-serif;
+    color:  #ffc102;
     width: 100% - 20px;
     height: 100% - 20px;
     display: flex;
@@ -131,12 +110,13 @@
     border-radius: 10px;
   }
 
-  .active-player {
-    background-color: rgb(17, 87, 40);
+  .active-player.alive-player {
+    background-color: #ffc102;
+    color: black;
   }
 
-  .inactive-player {
-    background-color: rgb(80, 79, 79);
+  .inactive-player.alive-player {
+    background-color: #403001;
   }
 
   .dead-player {
@@ -148,27 +128,30 @@
   }
 
   .life-total {
+    font-size: 15vh;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     flex: 1;
+    display: flex;
   }
 
   .life-total button {
-    font-size: 2rem;
-    width: 25%;
+    font-size: 15vh;
+    flex: 1;
+    margin: 0rem 0rem 0rem 0rem;
+    color: #ffc102;
+    background-color: #403001;
     height: 100%;
-    margin: 0px;
     padding: 0px;
     border-radius: 10px;
-    opacity: 0.5;
+    opacity: 1;
   }
 
   .life-total h1 {
-    font-size: 8rem;
-    width: 50%;
-    height: 100%;
+    font-size: 12vh;
+    flex: 1;
     text-align: center;
     margin: 0px;
     vertical-align: middle;
@@ -182,6 +165,7 @@
     width: 100%;
     border-radius: 5px;
     background: #00000000;
+    flex: 1;
   }
 
   .timer button {
@@ -189,6 +173,7 @@
   }
 
   .time-remaining {
-    font-size: 5rem;
+    font-size: 10vh;
+    margin-right: 0rem;
   }
 </style>
