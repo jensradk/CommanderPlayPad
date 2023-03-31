@@ -1,7 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
 
-  export let name;
   export let index;
   export let lifeTotal = 40;
   export let activeTimer = false;
@@ -60,7 +59,6 @@
 </script>
 
   <div class="{baseClass} {statusClass} {activeClass}">
-  <!--<div class="player-name" on:click={clicked} on:keypress={clicked}>{name}</div>-->
   <div class="life-total">
     <button
       on:click={() => {
@@ -80,21 +78,10 @@
         .toString()
         .padStart(2, "0")}
     </div>
-    <!-- <button class="resetbutton" on:click={resetTimer}>Reset</button> -->
   </div>
 </div>
 
 <style>
-  .player-name {
-    width: 100%;
-    text-align: center;
-    font-size: 1.5rem;
- }
-
-  .resetbutton {
-    alignment: right;
-  }
-
   .player-field {
     font-family: sans-serif;
     color:  #ffc102;
@@ -140,12 +127,13 @@
   .life-total button {
     font-size: 15vh;
     flex: 1;
-    margin: 0rem 0rem 0rem 0rem;
+    margin: 0rem;
     color: #ffc102;
     background-color: #403001;
     height: 100%;
     padding: 0px;
     border-radius: 10px;
+    border: 2px solid rgba(175, 175, 175, 0.6);
     opacity: 1;
   }
 
@@ -160,8 +148,7 @@
   .timer {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(128, 128, 128, 0.5);
+    justify-content: center;    
     width: 100%;
     border-radius: 5px;
     background: #00000000;
