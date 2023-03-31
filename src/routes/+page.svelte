@@ -2,20 +2,25 @@
   import Player from "./Player.svelte";
 
   let playerList = [4];
+  let playerBaseClassList = [
+    "player-field upside-down",
+    "player-field upside-down",
+    "player-field",
+    "player-field",
+  ];
   let activePlayerIndex = -1;
 
   function handleMessage(event) {
     let playerIndex = event.detail.index;
-    if (activePlayerIndex == -1) {
-      playerList[playerIndex].startTimer();
-      activePlayerIndex = playerIndex;
-    } else if (activePlayerIndex === playerIndex) {
+    
+    for (let i = 0; i < playerList.length; i++) {
+      playerList[i].stopTimer();
+    }
+
+    if (activePlayerIndex === playerIndex) {
       playerList[playerIndex].stopTimer();
       activePlayerIndex = -1;
     } else {
-      for (let i = 0; i < playerList.length; i++) {
-        playerList[i].stopTimer();
-      }
       activePlayerIndex = playerIndex;
       playerList[activePlayerIndex].startTimer();
     }
@@ -23,32 +28,14 @@
 </script>
 
 <div class="grid">
-  <Player
-    index="0"
-    baseClass="player-field upside-down"
-    bind:this={playerList[0]}
-    on:message={handleMessage}
-    isUpsideDown=true
-  />
-  <Player
-    index="1"
-    baseClass="player-field upside-down"
-    bind:this={playerList[1]}
-    on:message={handleMessage}
-    isUpsideDown=true
-  />
-  <Player
-    index="2"
-    baseClass="player-field"
-    bind:this={playerList[2]}
-    on:message={handleMessage}
-  />
-  <Player
-    index="3"
-    baseClass="player-field"
-    bind:this={playerList[3]}
-    on:message={handleMessage}
-  />
+  {#each playerBaseClassList as playerBaseClass, i}
+    <Player
+      index={i}
+      baseClass={playerBaseClass}
+      bind:this={playerList[i]}
+      on:message={handleMessage}
+    />
+  {/each}
 </div>
 
 <style>
@@ -60,5 +47,4 @@
     width: 100vw;
     height: 100vh;
   }
-
 </style>
