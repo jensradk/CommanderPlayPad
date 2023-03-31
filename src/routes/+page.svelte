@@ -24,7 +24,6 @@
 
 <div class="grid">
   <Player
-    name="Player 2"
     index="0"
     baseClass="player-field upside-down"
     bind:this={playerList[0]}
@@ -32,7 +31,6 @@
     isUpsideDown=true
   />
   <Player
-    name="Player 1"
     index="1"
     baseClass="player-field upside-down"
     bind:this={playerList[1]}
@@ -40,14 +38,12 @@
     isUpsideDown=true
   />
   <Player
-    name="Player 3"
     index="2"
     baseClass="player-field"
     bind:this={playerList[2]}
     on:message={handleMessage}
   />
   <Player
-    name="Player 4"
     index="3"
     baseClass="player-field"
     bind:this={playerList[3]}
