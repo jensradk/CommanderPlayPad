@@ -1,16 +1,21 @@
 <script>
   import { createEventDispatcher } from "svelte";
 
+  const STARTING_LIFE_TOTAL = 40;
+  const STARTING_TIME = 23 * 60;
+
+
+
   export let index;
   export let isDead = false;
-  export let lifeTotal = 4;
+  export let lifeTotal = STARTING_LIFE_TOTAL;
   export let activeTimer = false;
-  export let timeRemaining = 23 * 60;
+  export let timeRemaining = STARTING_TIME;
   export let baseClass;
   let statusClass = "alive-player";
   let activeClass = "inactive-player";
   let lifeButtonClass = "inactive-life-button";
-  let lifeChangeClass = "hideMe";
+  let lifeChangeClass = "hidden";
   let lifeChange = 0;
   let lifeChangeTimestamp = 0;
 
@@ -48,16 +53,19 @@
   export function resetTimer() {
     activeTimer = false;
     clearInterval(intervalId);
-    timeRemaining = 23 * 60;
+    lifeTotal = STARTING_LIFE_TOTAL;
+    timeRemaining = STARTING_TIME;
     statusClass = "alive-player";
     activeClass = "inactive-player";
     lifeButtonClass = "active-life-button";
-    lifeTotal = 40;
   }
 
   function addToLife(value) {
     lifeTotal = Math.max(0, lifeTotal + value);
     lifeChange = lifeChange + value;
+    if (lifeChangeTimestamp === 0) {
+      lifeChangeClass = "show-me";
+    }
     lifeChangeTimestamp = Date.now();
 
     if (lifeTotal <= 0) {
@@ -71,7 +79,7 @@
       isDead = false;
     }
 
-    lifeChangeClass = "";
+    // lifeChangeClass = "";
 
     /*
         This sets a timeout that hides the lifeChange.
@@ -81,10 +89,11 @@
     setTimeout(
       (changeTimestamp) => {
         if (changeTimestamp == lifeChangeTimestamp) {
-          lifeChangeClass = "hideMe";
+          lifeChangeClass = "hide-me";
           setTimeout(() => {
             lifeChange = 0;
-          }, 1000);
+            lifeChangeTimestamp = 0;
+          }, 500);
         }
       },
       3000,
@@ -129,33 +138,58 @@
 
 <style>
   :root {
+    /* Brown and orange */
+    --color-active-a: #977612;
+    --color-active-b: #d1a215;
+    --color-inactive-a: #403001;
+    --color-inactive-b: #6b5101;
+    --color-player-dead: #501818;
+   
+
     /** Steel and green
     --color-active-a: #143b15;
     --color-active-b: #0C4F0E;
-    --color-inactive-a: #3d3d3d;
-    --color-inactive-b: #696969;
+    --color-inactive-a: #646464;
+    --color-inactive-b: #919090;
     --color-player-dead: #3b1212;
     */
-
-    --color-active-a: #143b15;
-    --color-active-b: #0C4F0E;
-    --color-inactive-a: #3d3d3d;
-    --color-inactive-b: #696969;
-    --color-player-dead: #3b1212;
   }
 
-  .hideMe {
-    animation: fadeOut 1s;
+  .hide-me {
+    animation: fadeOut ease-in 450ms;
     animation-fill-mode: forwards;
   }
 
   @keyframes fadeOut {
     0% {
-      opacity: 1;
+      opacity: 0.75;
+      top: 0em;
+    }
+    95% {
+      opacity: 0.25;
     }
     100% {
       opacity: 0;
+      top: -0.5em;
     }
+  }
+
+  .show-me {
+    animation: fadeIn ease-out 225ms;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0.75;
+    }
+  }
+
+  .hidden {
+    opacity: 0;
   }
 
   .player-field {
@@ -164,14 +198,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(63, 63, 63, 0.6);
+    border: 2px solid #3f3f3f;
     border-radius: 10px;
   }
 
   .active-player {
     color: var(--color-inactive-b);
     background: linear-gradient(0deg, var(--color-active-a) 0%, var(--color-active-b) 100%);
-    background-size: 100% 200%;
+    background-size: 100% 400%;
     animation: gradient 5s ease-in-out infinite;
     -webkit-transition: all 225ms linear;
     -moz-transition: all 225ms linear;
@@ -202,7 +236,7 @@
 
   .inactive-player {
     color: var(--color-active-a);
-    background-image: linear-gradient(to top, var(--color-inactive-a) 0%, var(--color-inactive-b) 100%);
+    background-image: linear-gradient(to top, var(--color-inactive-b) 0%, var(--color-inactive-a) 100%);
     -webkit-transition: all 450ms linear;
     -moz-transition: all 450ms linear;
     -o-transition: all 450ms linear;
@@ -211,7 +245,7 @@
 
   .inactive-life-button {
     color: var(--color-active-a);
-    background-image: linear-gradient(to top, var(--color-inactive-a) 0%, var(--color-inactive-b) 100%);
+    background-image: linear-gradient(to top, var(--color-inactive-b) 0%, var(--color-inactive-a) 100%);
     -webkit-transition: all 450ms linear;
     -moz-transition: all 450ms linear;
     -o-transition: all 450ms linear;
@@ -266,7 +300,7 @@
     justify-content: center;
     width: 100%;
     border-radius: 5px;
-    flex: 1;
+    flex: 0 0 40%
   }
 
   .timer button {
