@@ -9,6 +9,9 @@
   let statusClass = "alive-player";
   let activeClass = "inactive-player";
   let activeLifeButtonClass = "inactive-life-button";
+  let lifeChangeClass = "hideMe";
+  let lifeChange = 0;
+  let lifeChangeTimestamp = 0;
 
   const dispatch = createEventDispatcher();
 
@@ -52,6 +55,9 @@
 
   function addToLife(value) {
     lifeTotal = Math.max(0, lifeTotal + value);
+    lifeChange = lifeChange + value;
+    lifeChangeTimestamp = Date.now();
+
     if (lifeTotal <= 0) {
       statusClass = "dead-player";
       activeLifeButtonClass = "dead-life-button";
@@ -59,6 +65,26 @@
     } else if (lifeTotal > 0) {
       statusClass = "alive-player";
     }
+
+    lifeChangeClass = "";
+
+    /*
+        This sets a timeout that hides the lifeChange.
+        Only allow the hiding if the timestamp is unchanged since the timeout started.
+        This makes sure that only the last timeout does something
+     */
+    setTimeout(
+      (changeTimestamp) => {
+        if (changeTimestamp == lifeChangeTimestamp) {
+          lifeChangeClass = "hideMe";
+          setTimeout(() => {
+            lifeChange = 0;
+          }, 1000);
+        }
+      },
+      3000,
+      lifeChangeTimestamp
+    );
     return lifeTotal;
   }
 </script>
@@ -71,7 +97,15 @@
         addToLife(-1);
       }}>−</button
     >
-    <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
+    <div style="flex: 1;">
+      <div
+        class={lifeChangeClass}
+        style="display: flex; font-size: 5vh; position:relative; align-items:center; justify-content: center;"
+      >
+        {lifeChange}
+      </div>
+      <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
+    </div>
     <button
       class={activeLifeButtonClass}
       on:click={() => {
@@ -95,6 +129,20 @@
     --color-inactive-a: #3d3d3d;
     --color-inactive-b: #696969;
     --color-player-dead: #3b1212;
+  }
+  
+  .hideMe {
+    animation: fadeOut 1s;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 
   .player-field {
@@ -193,7 +241,7 @@
   }
 
   .life-total h1 {
-    font-size: 12vh;
+    font-size: 14vh;
     flex: 1;
     text-align: center;
     margin: 0px;
