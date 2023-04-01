@@ -2,12 +2,13 @@
   import { createEventDispatcher } from "svelte";
 
   export let index;
-  export let lifeTotal = 40;
+  export let lifeTotal = 4;
   export let activeTimer = false;
   export let timeRemaining = 23 * 60;
   export let baseClass;
-  export let statusClass = 'alive-player';
-  export let activeClass = 'inactive-player';
+  let statusClass = "alive-player";
+  let activeClass = "inactive-player";
+  let activeLifeButtonClass = "inactive-life-button";
 
   const dispatch = createEventDispatcher();
 
@@ -27,46 +28,52 @@
           stopTimer();
         }
       }, 1000);
-      activeClass = 'active-player';
+      activeClass = "active-player";
+      activeLifeButtonClass = "active-life-button";
     }
   }
 
   export function stopTimer() {
     activeTimer = false;
     clearInterval(intervalId);
-    activeClass = 'inactive-player';
+    activeClass = "inactive-player";
+    activeLifeButtonClass = "inactive-life-button";
   }
 
   export function resetTimer() {
     activeTimer = false;
     clearInterval(intervalId);
     timeRemaining = 23 * 60;
-    statusClass = 'alive-player'
-    activeClass = 'inactive-player';
+    statusClass = "alive-player";
+    activeClass = "inactive-player";
+    activeLifeButtonClass = "active-life-button";
     lifeTotal = 40;
   }
 
   function addToLife(value) {
     lifeTotal = Math.max(0, lifeTotal + value);
     if (lifeTotal <= 0) {
-        statusClass = 'dead-player'
-        stopTimer();
+      statusClass = "dead-player";
+      activeLifeButtonClass = "dead-life-button";
+      stopTimer();
     } else if (lifeTotal > 0) {
-        statusClass = 'alive-player'
+      statusClass = "alive-player";
     }
     return lifeTotal;
   }
 </script>
 
-  <div class="{baseClass} {statusClass} {activeClass} unselectable">
+<div class="{baseClass} {statusClass} {activeClass} unselectable">
   <div class="life-total">
     <button
+      class={activeLifeButtonClass}
       on:click={() => {
         addToLife(-1);
       }}>−</button
     >
     <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
     <button
+      class={activeLifeButtonClass}
       on:click={() => {
         addToLife(1);
       }}>+</button
@@ -82,9 +89,17 @@
 </div>
 
 <style>
+  :root {
+    --color-active-a: #143b15;
+    --color-active-b: #0C4F0E;
+    --color-inactive-a: #3d3d3d;
+    --color-inactive-b: #696969;
+    --color-player-dead: #3b1212;
+  }
+
   .player-field {
     font-family: sans-serif;
-    color:  #dda600;
+    color: #dda600;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -93,21 +108,63 @@
     border-radius: 10px;
   }
 
-  .active-player.alive-player {
-    background-color: #dda600;
-    color: black;
-  }
-
-  .inactive-player.alive-player {
-    background-color: #403001;
-  }
-
   .active-player {
-    scale: 0.999;
+    color: var(--color-inactive-b);
+    /* background-image: linear-gradient(to top, #dda600 0%, #9f7f23 100%); */
+    background: linear-gradient(0deg, var(--color-active-a) 0%, var(--color-active-b) 100%);
+    background-size: 100% 200%;
+    animation: gradient 5s ease-in-out infinite;
+    -webkit-transition: all 225ms linear;
+    -moz-transition: all 225ms linear;
+    -o-transition: all 225ms linear;
+    transition: all 225ms linear;
+  }
+
+  .active-life-button {
+    color: var(--color-inactive-b);
+    background-image: linear-gradient(to top, var(--color-active-b) 0%, var(--color-active-a) 100%);
+    -webkit-transition: all 225ms linear;
+    -moz-transition: all 225ms linear;
+    -o-transition: all 225ms linear;
+    transition: all 225ms linear;
+  }
+
+  .inactive-player {
+    color: var(--color-active-a);
+    background-image: linear-gradient(to top, var(--color-inactive-a) 0%, var(--color-inactive-b) 100%);
+    -webkit-transition: all 450ms linear;
+    -moz-transition: all 450ms linear;
+    -o-transition: all 450ms linear;
+    transition: all 450ms linear;
+  }
+
+  .inactive-life-button {
+    color: var(--color-active-a);
+    background-image: linear-gradient(to top, var(--color-inactive-a) 0%, var(--color-inactive-b) 100%);
+    -webkit-transition: all 450ms linear;
+    -moz-transition: all 450ms linear;
+    -o-transition: all 450ms linear;
+    transition: all 450ms linear;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 100% 100%
+    }
+    50% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
   }
 
   .dead-player {
-    background-color: rgb(59, 18, 18);
+    background-image: linear-gradient(to top, var(--color-player-dead) 0%, var(--color-player-dead) 100%);    
+  }
+
+  .dead-life-button {
+    background-image: linear-gradient(to top, var(--color-player-dead) 0%, var(--color-player-dead) 100%);    
   }
 
   .upside-down {
@@ -128,8 +185,6 @@
     font-size: 15vh;
     flex: 1;
     margin: 0rem;
-    color: #ffc102;
-    background-color: #403001;
     height: 100%;
     padding: 0px;
     border-radius: 10px;
@@ -148,10 +203,9 @@
   .timer {
     display: flex;
     align-items: center;
-    justify-content: center;    
+    justify-content: center;
     width: 100%;
     border-radius: 5px;
-    background: #00000000;
     flex: 1;
   }
 
@@ -171,5 +225,5 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
+  }
 </style>
