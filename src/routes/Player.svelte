@@ -102,7 +102,7 @@
         class={lifeChangeClass}
         style="display: flex; font-size: 5vh; position:relative; align-items:center; justify-content: center;"
       >
-        {lifeChange}
+        {lifeChange > 0 ? "+" + lifeChange : lifeChange}
       </div>
       <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
     </div>
@@ -130,7 +130,7 @@
     --color-inactive-b: #696969;
     --color-player-dead: #3b1212;
   }
-  
+
   .hideMe {
     animation: fadeOut 1s;
     animation-fill-mode: forwards;
