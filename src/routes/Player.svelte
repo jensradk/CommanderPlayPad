@@ -2,13 +2,14 @@
   import { createEventDispatcher } from "svelte";
 
   export let index;
+  export let isDead = false;
   export let lifeTotal = 4;
   export let activeTimer = false;
   export let timeRemaining = 23 * 60;
   export let baseClass;
   let statusClass = "alive-player";
   let activeClass = "inactive-player";
-  let activeLifeButtonClass = "inactive-life-button";
+  let lifeButtonClass = "inactive-life-button";
   let lifeChangeClass = "hideMe";
   let lifeChange = 0;
   let lifeChangeTimestamp = 0;
@@ -22,25 +23,26 @@
   let intervalId = null;
 
   export function startTimer() {
-    if (timeRemaining > 0) {
+    if (!isDead && timeRemaining > 0) {
       activeTimer = true;
       intervalId = setInterval(() => {
         timeRemaining--;
         if (timeRemaining === 0) {
           addToLife(-lifeTotal);
-          stopTimer();
         }
       }, 1000);
       activeClass = "active-player";
-      activeLifeButtonClass = "active-life-button";
+      lifeButtonClass = "active-life-button";
     }
   }
 
   export function stopTimer() {
-    activeTimer = false;
-    clearInterval(intervalId);
-    activeClass = "inactive-player";
-    activeLifeButtonClass = "inactive-life-button";
+    if (!isDead) {
+      activeTimer = false;
+      clearInterval(intervalId);
+      activeClass = "inactive-player";
+      lifeButtonClass = "inactive-life-button";
+    }
   }
 
   export function resetTimer() {
@@ -49,7 +51,7 @@
     timeRemaining = 23 * 60;
     statusClass = "alive-player";
     activeClass = "inactive-player";
-    activeLifeButtonClass = "active-life-button";
+    lifeButtonClass = "active-life-button";
     lifeTotal = 40;
   }
 
@@ -59,11 +61,14 @@
     lifeChangeTimestamp = Date.now();
 
     if (lifeTotal <= 0) {
-      statusClass = "dead-player";
-      activeLifeButtonClass = "dead-life-button";
       stopTimer();
+      statusClass = "dead-player";
+      lifeButtonClass = "dead-life-button";
+      isDead = true;
     } else if (lifeTotal > 0) {
       statusClass = "alive-player";
+      lifeButtonClass = activeClass === "active-player" ? "active-life-button" : "inactive-life-button";
+      isDead = false;
     }
 
     lifeChangeClass = "";
@@ -92,7 +97,7 @@
 <div class="{baseClass} {statusClass} {activeClass} unselectable">
   <div class="life-total">
     <button
-      class={activeLifeButtonClass}
+      class={lifeButtonClass}
       on:click={() => {
         addToLife(-1);
       }}>−</button
@@ -107,7 +112,7 @@
       <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
     </div>
     <button
-      class={activeLifeButtonClass}
+      class={lifeButtonClass}
       on:click={() => {
         addToLife(1);
       }}>+</button
@@ -124,6 +129,14 @@
 
 <style>
   :root {
+    /** Steel and green
+    --color-active-a: #143b15;
+    --color-active-b: #0C4F0E;
+    --color-inactive-a: #3d3d3d;
+    --color-inactive-b: #696969;
+    --color-player-dead: #3b1212;
+    */
+
     --color-active-a: #143b15;
     --color-active-b: #0C4F0E;
     --color-inactive-a: #3d3d3d;
@@ -147,7 +160,6 @@
 
   .player-field {
     font-family: sans-serif;
-    color: #dda600;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -158,7 +170,6 @@
 
   .active-player {
     color: var(--color-inactive-b);
-    /* background-image: linear-gradient(to top, #dda600 0%, #9f7f23 100%); */
     background: linear-gradient(0deg, var(--color-active-a) 0%, var(--color-active-b) 100%);
     background-size: 100% 200%;
     animation: gradient 5s ease-in-out infinite;
@@ -166,6 +177,18 @@
     -moz-transition: all 225ms linear;
     -o-transition: all 225ms linear;
     transition: all 225ms linear;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 100% 100%
+    }
+    50% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
   }
 
   .active-life-button {
@@ -195,24 +218,13 @@
     transition: all 450ms linear;
   }
 
-  @keyframes gradient {
-    0% {
-      background-position: 100% 100%
-    }
-    50% {
-      background-position: 0% 0%;
-    }
-    100% {
-      background-position: 100% 100%;
-    }
-  }
-
   .dead-player {
     background-image: linear-gradient(to top, var(--color-player-dead) 0%, var(--color-player-dead) 100%);    
   }
 
   .dead-life-button {
-    background-image: linear-gradient(to top, var(--color-player-dead) 0%, var(--color-player-dead) 100%);    
+    color: var(--color-active-a);
+    background-image: linear-gradient(to top, var(--color-player-dead) 0%, var(--color-player-dead) 100%);
   }
 
   .upside-down {
