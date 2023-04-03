@@ -278,10 +278,10 @@
 
   .life-total button {
     font-size: 15vh;
-    flex: 1;
+    flex: 0 0 25%;
     margin: 0rem;
-    height: 100%;
     padding: 0px;
+    height: 100%;
     border-radius: 10px;
     border: 2px solid rgba(175, 175, 175, 0.6);
     opacity: 1;
@@ -289,7 +289,7 @@
 
   .life-total h1 {
     font-size: 14vh;
-    flex: 1;
+    flex-grow: inherit;
     text-align: center;
     margin: 0px;
     vertical-align: middle;
@@ -301,7 +301,7 @@
     justify-content: center;
     width: 100%;
     border-radius: 5px;
-    flex: 0 0 40%
+    flex: 0 0 50%
   }
 
   .timer button {
