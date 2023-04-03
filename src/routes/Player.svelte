@@ -1,16 +1,13 @@
 <script>
   import { createEventDispatcher } from "svelte";
 
-  const STARTING_LIFE_TOTAL = 40;
-  const STARTING_TIME = 23 * 60;
-
-
+  const DEFAULT_STARTING_LIFE_TOTAL = 40;
+  const DEFAULT_STARTING_TIME = 23 * 60;
 
   export let index;
-  export let isDead = false;
-  export let lifeTotal = STARTING_LIFE_TOTAL;
+  export let lifeTotal = DEFAULT_STARTING_LIFE_TOTAL;
   export let activeTimer = false;
-  export let timeRemaining = STARTING_TIME;
+  export let timeRemaining = DEFAULT_STARTING_TIME;
   export let baseClass;
   let statusClass = "alive-player";
   let activeClass = "inactive-player";
@@ -22,13 +19,13 @@
   const dispatch = createEventDispatcher();
 
   function clicked() {
-    dispatch("message", { index: index });
+    dispatch("updateActive", { index: index });
   }
 
   let intervalId = null;
 
   export function startTimer() {
-    if (!isDead && timeRemaining > 0) {
+    if (!isDead() && timeRemaining > 0) {
       activeTimer = true;
       intervalId = setInterval(() => {
         timeRemaining--;
@@ -42,22 +39,28 @@
   }
 
   export function stopTimer() {
-    if (!isDead) {
-      activeTimer = false;
-      clearInterval(intervalId);
-      activeClass = "inactive-player";
+    activeTimer = false;
+    clearInterval(intervalId);
+    activeClass = "inactive-player";
+    if (isDead()) {
+      lifeButtonClass = "dead-life-button";
+    } else {
       lifeButtonClass = "inactive-life-button";
     }
   }
 
-  export function resetTimer() {
+  export function reset(life, timeMinutes) {
     activeTimer = false;
     clearInterval(intervalId);
-    lifeTotal = STARTING_LIFE_TOTAL;
-    timeRemaining = STARTING_TIME;
+    lifeTotal = life;
+    timeRemaining = timeMinutes * 60;
     statusClass = "alive-player";
     activeClass = "inactive-player";
-    lifeButtonClass = "active-life-button";
+    lifeButtonClass = "inactive-life-button";
+  }
+
+  function isDead() {
+    return lifeTotal <= 0;
   }
 
   function addToLife(value) {
@@ -72,11 +75,9 @@
       stopTimer();
       statusClass = "dead-player";
       lifeButtonClass = "dead-life-button";
-      isDead = true;
     } else if (lifeTotal > 0) {
       statusClass = "alive-player";
       lifeButtonClass = activeClass === "active-player" ? "active-life-button" : "inactive-life-button";
-      isDead = false;
     }
 
     // lifeChangeClass = "";
@@ -88,7 +89,7 @@
      */
     setTimeout(
       (changeTimestamp) => {
-        if (changeTimestamp == lifeChangeTimestamp) {
+        if (changeTimestamp === lifeChangeTimestamp) {
           lifeChangeClass = "hide-me";
           setTimeout(() => {
             lifeChange = 0;
@@ -111,14 +112,14 @@
         addToLife(-1);
       }}>−</button
     >
-    <div style="flex: 1;">
+    <div on:click={clicked} on:keypress={clicked} style="flex: 1;">
       <div
         class={lifeChangeClass}
         style="display: flex; font-size: 5vh; position:relative; align-items:center; justify-content: center;"
       >
         {lifeChange > 0 ? "+" + lifeChange : lifeChange}
       </div>
-      <h1 on:click={clicked} on:keypress={clicked}>{lifeTotal}</h1>
+      <h1>{lifeTotal}</h1>
     </div>
     <button
       class={lifeButtonClass}
