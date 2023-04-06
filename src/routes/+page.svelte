@@ -13,6 +13,8 @@
   let activePlayerIndex = -1;
 
   let showSettings = false;
+  let settingsButtonSpinClass = "spin-hidden";
+  let settingsButtonScaleClass = "scale-hidden";
 
   function handleUpdateActivePlayer(event) {
     let playerIndex = event.detail.index;
@@ -32,13 +34,24 @@
 
   function toggleShowSettings() {
     showSettings = !showSettings;
+    if (showSettings) {
+      settingsButtonSpinClass = "spin-shown";
+      settingsButtonScaleClass = "scale-shown";
+      for (let i = 0; i < playerList.length; i++) {
+        playerList[i].stopTimer();
+      }
+      activePlayerIndex = -1;
+    } else {
+      settingsButtonSpinClass = "spin-hidden";
+      settingsButtonScaleClass = "scale-hidden";
+    }
   }
 
   function handleRestartGame(event) {
     for (let i = 0; i < playerList.length; i++) {
       playerList[i].reset();
     }
-    showSettings = false;
+    toggleShowSettings();
   }
 </script>
 
@@ -60,18 +73,27 @@
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div id="settings-button" class="unselectable" on:click={toggleShowSettings}>
-    {#if showSettings}
-      <i class="fa-sharp fa-solid fa-gear slow-spin" />
-    {:else}
-      <i class="fa-sharp fa-solid fa-gear" />
-    {/if}
+    <i
+      class="fa-sharp fa-solid fa-gear {settingsButtonScaleClass} {settingsButtonSpinClass}"
+    />
   </div>
 </div>
 
 <style>
-  .slow-spin {
-    -webkit-animation: fa-spin 24s infinite linear;
-    animation: fa-spin 24s infinite linear;
+  .scale-shown {
+    scale: 0.95;
+  }
+
+  .scale-hidden {
+    scale: 0.75;
+  }
+
+  .spin-shown {
+    animation: fa-spin 60s infinite linear;
+  }
+
+  .spin-hidden {
+    animation: fa-spin 180s infinite linear;
   }
 
   .grid {
@@ -94,7 +116,7 @@
     transform: translate(-50%, -50%);
     color: #d1a215;
     background-color: #403001;
-    border-radius: 20px;
+    border-radius: 25px;
     border: 2px solid rgba(175, 175, 175, 0.6);
     font-size: 10vh;
     justify-content: center;

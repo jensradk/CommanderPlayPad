@@ -1,6 +1,6 @@
 <script>
-  import { createEventDispatcher } from "svelte"
-  import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js"
+  import { createEventDispatcher } from "svelte";
+  import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js";
 
   const dispatch = createEventDispatcher();
 
@@ -9,8 +9,8 @@
   }
 </script>
 
-<div id="settings">
-  <div>
+<div class="grid-settings">
+  <div class="grid-content">
     <div>
       Starting life: <input type="number" bind:value={$startingLifeTotal} />
     </div>
@@ -20,13 +20,18 @@
         bind:value={$startingTimeLeftMinutes}
       />
     </div>
-    <div>Restart game:</div>
-    <button on:click={() => restartClicked()}>&#x2672;</button>
   </div>
+  <div class="grid-content">Some very clever settings</div>
+  <div class="grid-content">
+    <button class="restart-button" on:click={() => restartClicked()}
+      ><i class="fa fa-refresh" />Restart</button
+    >
+  </div>  
+  <div class="grid-content">Color scheme picker</div>
 </div>
 
 <style>
-  #settings {
+  .grid-settings {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
@@ -38,15 +43,17 @@
     width: 100vw;
     height: 100vh;
     z-index: 99;
+    opacity: 0.9;
   }
 
-  #settings button {
-    font-size: 15vh;
-    flex: 1;
-    margin: 0rem;
-    padding: 0px;
+  .grid-content {
+    margin: auto;
+  }
+
+  .restart-button {
+    font-size: 10vh;
     border-radius: 10px;
     border: 2px solid rgba(175, 175, 175, 0.6);
-    opacity: 1;
+    padding: 20px;
   }
 </style>
