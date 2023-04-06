@@ -90,11 +90,11 @@
   }
 
   .spin-shown {
-    animation: fa-spin 60s infinite linear;
+    /* animation: fa-spin 60s infinite linear; */
   }
 
   .spin-hidden {
-    animation: fa-spin 180s infinite linear;
+    /* animation: fa-spin 180s infinite linear; */
   }
 
   .grid {

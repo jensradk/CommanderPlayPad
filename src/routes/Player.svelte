@@ -212,11 +212,11 @@
       var(--color-active-b) 100%
     );
     background-size: 100% 400%;
-    animation: gradient 5s ease-in-out infinite;
+    /* animation: gradient 5s ease-in-out infinite;
     -webkit-transition: all 225ms linear;
     -moz-transition: all 225ms linear;
     -o-transition: all 225ms linear;
-    transition: all 225ms linear;
+    transition: all 225ms linear; */
   }
 
   @keyframes gradient {
