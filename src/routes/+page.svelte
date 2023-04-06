@@ -1,6 +1,7 @@
 <script>
   import Player from "./Player.svelte";
   import SettingsMenu from "./SettingsMenu.svelte";
+  import { startingLifeTotal, startingTimeLeftSeconds } from "./stores";
 
   let playerList = [4];
   let playerBaseClassList = [
@@ -51,17 +52,28 @@
       index={i}
       baseClass={playerBaseClass}
       bind:this={playerList[i]}
+      lifeTotal={$startingLifeTotal}
+      timeRemaining={$startingTimeLeftSeconds}
       on:updateActivePlayer={handleUpdateActivePlayer}
     />
   {/each}
 
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div id="settings-button" class="unselectable" on:click={toggleShowSettings}>
-    &#9881;
+    {#if showSettings}
+      <i class="fa-sharp fa-solid fa-gear slow-spin" />
+    {:else}
+      <i class="fa-sharp fa-solid fa-gear" />
+    {/if}
   </div>
 </div>
 
 <style>
+  .slow-spin {
+    -webkit-animation: fa-spin 24s infinite linear;
+    animation: fa-spin 24s infinite linear;
+  }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

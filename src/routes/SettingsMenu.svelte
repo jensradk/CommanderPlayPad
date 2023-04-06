@@ -1,6 +1,6 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js";
+  import { createEventDispatcher } from "svelte"
+  import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js"
 
   const dispatch = createEventDispatcher();
 

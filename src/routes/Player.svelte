@@ -1,7 +1,6 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { onMount } from "svelte";
-  import { startingLifeTotal, startingTimeLeftSeconds } from "./stores";
+  import { createEventDispatcher } from "svelte"
+  import { startingLifeTotal, startingTimeLeftSeconds } from "./stores"
 
   const dispatch = createEventDispatcher();
 
@@ -16,8 +15,6 @@
   let lifeChangeClass = "hidden";
   let lifeChange = 0;
   let lifeChangeTimestamp = 0;
-
-  onMount(reset);
 
   function clicked() {
     dispatch("updateActivePlayer", { index: index });
