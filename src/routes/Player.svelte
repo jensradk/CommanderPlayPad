@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte"
+  import { get } from "svelte/store"
   import { startingLifeTotal, startingTimeLeftSeconds } from "./stores"
 
   const dispatch = createEventDispatcher();
@@ -50,8 +51,8 @@
   export function reset() {
     activeTimer = false;
     clearInterval(intervalId);
-    lifeTotal = $startingLifeTotal;
-    timeRemaining = $startingTimeLeftSeconds;
+    lifeTotal = get(startingLifeTotal);
+    timeRemaining = get(startingTimeLeftSeconds);
     statusClass = "alive-player";
     activeClass = "inactive-player";
     lifeButtonClass = "inactive-life-button";

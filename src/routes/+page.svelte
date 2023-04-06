@@ -1,6 +1,7 @@
 <script>
   import Player from "./Player.svelte";
   import SettingsMenu from "./SettingsMenu.svelte";
+  import { get } from "svelte/store";
   import { startingLifeTotal, startingTimeLeftSeconds } from "./stores";
 
   let playerList = [4];
@@ -65,8 +66,8 @@
       index={i}
       baseClass={playerBaseClass}
       bind:this={playerList[i]}
-      lifeTotal={$startingLifeTotal}
-      timeRemaining={$startingTimeLeftSeconds}
+      lifeTotal={get(startingLifeTotal)}
+      timeRemaining={get(startingTimeLeftSeconds)}
       on:updateActivePlayer={handleUpdateActivePlayer}
     />
   {/each}

@@ -14,19 +14,39 @@
     <div>
       Starting life: <input type="number" bind:value={$startingLifeTotal} />
     </div>
+    <button class="value-changer-button"
+      on:click={() => {
+        $startingLifeTotal++;
+      }}>+</button
+    >
+    <button class="value-changer-button"
+      on:click={() => {
+        $startingLifeTotal--;
+      }}>-</button
+    >
     <div>
       Starting time: <input
         type="number"
         bind:value={$startingTimeLeftMinutes}
       />
     </div>
+    <button class="value-changer-button"
+      on:click={() => {
+        $startingTimeLeftMinutes++;
+      }}>+</button
+    >
+    <button class="value-changer-button"
+      on:click={() => {
+        $startingTimeLeftMinutes--;
+      }}>-</button
+    >
   </div>
   <div class="grid-content">Some very clever settings</div>
   <div class="grid-content">
     <button class="restart-button" on:click={() => restartClicked()}
       ><i class="fa fa-refresh" />Restart</button
     >
-  </div>  
+  </div>
   <div class="grid-content">Color scheme picker</div>
 </div>
 
@@ -48,6 +68,14 @@
 
   .grid-content {
     margin: auto;
+  }
+
+  .value-changer-button {
+    font-size: 3vh;
+    border-radius: 10px;
+    border: 2px solid rgba(175, 175, 175, 0.6);
+    padding: 15px;
+    width: 45%;
   }
 
   .restart-button {
