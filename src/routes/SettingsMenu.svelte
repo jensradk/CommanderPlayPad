@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js";
+  import SettingsMenuLifeTotalHistory from "./SettingsMenuLifeTotalHistory.svelte";
 
   const DEFAULT_STARTING_LIFE = 40;
   const DEFAULT_STARTING_TIME_MINUTES = 23;
@@ -12,7 +13,7 @@
   }
 </script>
 
-<div class="grid-settings">
+<div class="grid-settings unselectable">
   <div class="grid-content">
     <div>
       Starting life: <input type="number" bind:value={$startingLifeTotal} />
@@ -64,7 +65,7 @@
       >
     </div>
   </div>
-  <div class="grid-content">Some very clever settings</div>
+  <SettingsMenuLifeTotalHistory/>
   <div class="grid-content">
     <button class="restart-button" on:click={() => restartClicked()}
       ><i class="fa fa-refresh" />Restart</button

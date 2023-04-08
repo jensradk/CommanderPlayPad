@@ -1,8 +1,13 @@
 <script>
+  import { onMount } from "svelte";
   import Player from "./Player.svelte";
   import SettingsMenu from "./SettingsMenu.svelte";
   import { get } from "svelte/store";
-  import { startingLifeTotal, startingTimeLeftSeconds } from "./stores";
+  import {
+    startingLifeTotal,
+    startingTimeLeftSeconds,
+    resetPlayerLifeTotalHistory,
+  } from "./stores";
 
   let playerList = [4];
   let playerBaseClassList = [
@@ -16,6 +21,8 @@
   let showSettings = false;
   let settingsButtonSpinClass = "spin-hidden";
   let settingsButtonScaleClass = "scale-hidden";
+
+  onMount(resetPlayerLifeTotalHistory);
 
   function handleUpdateActivePlayer(event) {
     let playerIndex = event.detail.index;
@@ -53,6 +60,7 @@
       playerList[i].reset();
     }
     toggleShowSettings();
+    resetPlayerLifeTotalHistory();
   }
 </script>
 
@@ -124,7 +132,7 @@
     align-items: center;
   }
 
-  .unselectable {
+  :global(.unselectable) {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;

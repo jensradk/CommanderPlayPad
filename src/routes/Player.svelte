@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import { get } from "svelte/store";
   import {
     startingLifeTotal,
@@ -23,13 +23,6 @@
   let lifeChangeClass = "hidden";
   let lifeChange = 0;
   let lifeChangeTimestamp = 0;
-
-  onMount(() => {
-    addToPlayerLifeTotalHistory(index, {
-      lifeChange: lifeChange,
-      newLifeTotal: lifeTotal,
-    });
-  });
 
   function clicked() {
     dispatch("updateActivePlayer", { index: index });
@@ -360,14 +353,5 @@
   .time-remaining {
     font-size: 10vh;
     margin-right: 0rem;
-  }
-
-  .unselectable {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
   }
 </style>

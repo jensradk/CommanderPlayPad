@@ -1,4 +1,4 @@
-import { writable, derived } from "svelte/store";
+import { writable, derived, get } from "svelte/store";
 
 export const startingLifeTotal = writable(40);
 export const startingTimeLeftMinutes = writable(23);
@@ -6,28 +6,42 @@ export const startingTimeLeftSeconds = derived(
   startingTimeLeftMinutes,
   ($startingTimeLeftMinutes) => $startingTimeLeftMinutes * 60
 );
-export const playerLifeTotalHistory = writable([
+export const playerLifeTotalHistoryList = writable([
   {
     "name": "Player 1",
-    "lifeChangeHistory": []
+    "entryList": []
   },
   {
     "name": "Player 2",
-    "lifeChangeHistory": []
+    "entryList": []
   },
   {
     "name": "Player 3",
-    "lifeChangeHistory": []
+    "entryList": []
   },
   {
     "name": "Player 4",
-    "lifeChangeHistory": []
+    "entryList": []
   }
 ]);
 
 export const addToPlayerLifeTotalHistory = (playerIndex, lifeChangeData) => {
-  playerLifeTotalHistory.update(val => {
-    val[playerIndex].lifeChangeHistory.push(lifeChangeData);
+  playerLifeTotalHistoryList.update(val => {
+    val[playerIndex].entryList.push(lifeChangeData);
     return val;
-  })
+  });
+}
+
+export const resetPlayerLifeTotalHistory = () => {
+  playerLifeTotalHistoryList.update(val => {
+     val.forEach((playerListTotalHistory) => {
+      playerListTotalHistory.entryList = [
+        {
+          lifeChange: 0,
+          newLifeTotal: get(startingLifeTotal)
+        }
+      ]
+     })
+     return val;
+  });
 }
