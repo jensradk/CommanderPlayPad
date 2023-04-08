@@ -1,9 +1,16 @@
 <script>
-  import { createEventDispatcher } from "svelte"
-  import { get } from "svelte/store"
-  import { startingLifeTotal, startingTimeLeftSeconds } from "./stores"
+  import { createEventDispatcher, onMount } from "svelte";
+  import { get } from "svelte/store";
+  import {
+    startingLifeTotal,
+    startingTimeLeftSeconds,
+    addToPlayerLifeTotalHistory,
+  } from "./stores";
 
   const dispatch = createEventDispatcher();
+
+  const LIFECHANGE_FADEOUT_DURATION_MS = 1000;
+  const LIFECHANGE_SHOW_DURATION_MS = 10000 - LIFECHANGE_FADEOUT_DURATION_MS;
 
   export let index;
   export let lifeTotal;
@@ -17,8 +24,24 @@
   let lifeChange = 0;
   let lifeChangeTimestamp = 0;
 
+  onMount(() => {
+    addToPlayerLifeTotalHistory(index, {
+      lifeChange: lifeChange,
+      newLifeTotal: lifeTotal,
+    });
+  });
+
   function clicked() {
     dispatch("updateActivePlayer", { index: index });
+  }
+
+  function recordLifeChangeToHistory() {
+    if (lifeChange !== 0) {
+      addToPlayerLifeTotalHistory(index, {
+        lifeChange: lifeChange,
+        newLifeTotal: lifeTotal,
+      });
+    }
   }
 
   let intervalId = null;
@@ -92,12 +115,13 @@
         if (changeTimestamp === lifeChangeTimestamp) {
           lifeChangeClass = "hide-me";
           setTimeout(() => {
+            recordLifeChangeToHistory();
             lifeChange = 0;
             lifeChangeTimestamp = 0;
-          }, 1000);
+          }, LIFECHANGE_FADEOUT_DURATION_MS);
         }
       },
-      10000,
+      LIFECHANGE_SHOW_DURATION_MS,
       lifeChangeTimestamp
     );
     return lifeTotal;
