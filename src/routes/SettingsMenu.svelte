@@ -21,14 +21,14 @@
       <button
         class="value-changer-button"
         on:click={() => {
-          $startingLifeTotal++;
-        }}>+</button
+          $startingLifeTotal--;
+        }}>-</button
       >
       <button
         class="value-changer-button"
         on:click={() => {
-          $startingLifeTotal--;
-        }}>-</button
+          $startingLifeTotal++;
+        }}>+</button
       >
       <button
         class="value-changer-button"
@@ -47,14 +47,14 @@
       <button
         class="value-changer-button"
         on:click={() => {
-          $startingTimeLeftMinutes++;
-        }}>+</button
+          $startingTimeLeftMinutes--;
+        }}>-</button
       >
       <button
         class="value-changer-button"
         on:click={() => {
-          $startingTimeLeftMinutes--;
-        }}>-</button
+          $startingTimeLeftMinutes++;
+        }}>+</button
       >
       <button
         class="value-changer-button"
