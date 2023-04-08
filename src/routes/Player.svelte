@@ -94,10 +94,10 @@
           setTimeout(() => {
             lifeChange = 0;
             lifeChangeTimestamp = 0;
-          }, 500);
+          }, 1000);
         }
       },
-      3000,
+      10000,
       lifeChangeTimestamp
     );
     return lifeTotal;
