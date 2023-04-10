@@ -1,8 +1,9 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { startingLifeTotal, startingTimeLeftMinutes } from "./stores.js";
+  import SettingsMenuThemeSelector from "./SettingsMenuThemeSelector.svelte";
   import SettingsMenuLifeTotalHistory from "./SettingsMenuLifeTotalHistory.svelte";
-
+  
   const DEFAULT_STARTING_LIFE = 40;
   const DEFAULT_STARTING_TIME_MINUTES = 23;
 
@@ -89,7 +90,7 @@
       ><i class="fa fa-refresh" />Restart</button
     >
   </div>
-  <div class="grid-content">Color scheme picker</div>
+  <SettingsMenuThemeSelector />
 </div>
 {/if}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
