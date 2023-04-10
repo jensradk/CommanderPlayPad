@@ -120,14 +120,14 @@
     z-index: 100;
     top: 50%;
     left: 50%;
-    height: 10vh;
-    width: 10vh;
+    height: 60px;
+    width: 60px;
     transform: translate(-50%, -50%);
     color: #d1a215;
     background-color: #403001;
     border-radius: 25px;
     border: 2px solid rgba(175, 175, 175, 0.6);
-    font-size: 10vh;
+    font-size: 55px;
     justify-content: center;
     align-items: center;
   }
