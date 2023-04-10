@@ -4,31 +4,42 @@
 
 <div class="unselectable">
   <h3>Life total history:</h3>
-  <div class="life-total-lists-flex-container">
-    {#each $playerLifeTotalHistoryList as playerLifeTotalHistory}
-      <div>
-        {playerLifeTotalHistory.name}:
-        <ol>
-          {#each playerLifeTotalHistory.entryList as entry}
-          {#if entry.lifeChange === 0}
-            <li>Start: {entry.newLifeTotal}</li>
-            {:else}
-            <li>{#if entry.lifeChange > 0}+{/if}{entry.lifeChange} to {entry.newLifeTotal}</li>
-          {/if}
-            
-          {/each}
-        </ol>
-      </div>
-    {/each}
+  <div class="scrollable">
+    <div class="life-total-lists-flex-container">
+      {#each $playerLifeTotalHistoryList as playerLifeTotalHistory}
+        <div>
+          {playerLifeTotalHistory.name}:
+          <ol>
+            {#each playerLifeTotalHistory.entryList as entry}
+              {#if entry.lifeChange === 0}
+                <li>Start: {entry.newLifeTotal}</li>
+              {:else}
+                <li>
+                  {#if entry.lifeChange > 0}+{/if}{entry.lifeChange} to {entry.newLifeTotal}
+                </li>
+              {/if}
+            {/each}
+          </ol>
+        </div>
+      {/each}
+    </div>
   </div>
 </div>
 
 <style>
+  .scrollable {
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
   .life-total-lists-flex-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
+    height: 0;
+    margin-left: 2vw;
   }
 
   h3 {
