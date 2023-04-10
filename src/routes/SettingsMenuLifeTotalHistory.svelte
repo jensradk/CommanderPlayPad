@@ -7,9 +7,9 @@
   <div class="scrollable">
     <div class="life-total-lists-flex-container">
       {#each $playerLifeTotalHistoryList as playerLifeTotalHistory}
-        <div>
+        <div class="life-total-list">
           {playerLifeTotalHistory.name}:
-          <ol>
+          <ul>
             {#each playerLifeTotalHistory.entryList as entry}
               {#if entry.lifeChange === 0}
                 <li>Start: {entry.newLifeTotal}</li>
@@ -19,7 +19,7 @@
                 </li>
               {/if}
             {/each}
-          </ol>
+          </ul>
         </div>
       {/each}
     </div>
@@ -48,9 +48,19 @@
     text-align: center;
   }
 
-  ol {
+  .life-total-list {
     margin: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 10px;
+  }
+
+  ul {
+    margin-top: 5px;
+    padding: 0px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
   }
 </style>
