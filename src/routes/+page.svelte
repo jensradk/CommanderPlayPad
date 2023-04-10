@@ -18,10 +18,6 @@
   ];
   let activePlayerIndex = -1;
 
-  let showSettings = false;
-  let settingsButtonSpinClass = "spin-hidden";
-  let settingsButtonScaleClass = "scale-hidden";
-
   onMount(resetPlayerLifeTotalHistory);
 
   function handleUpdateActivePlayer(event) {
@@ -40,26 +36,17 @@
     }
   }
 
-  function toggleShowSettings() {
-    showSettings = !showSettings;
-    if (showSettings) {
-      settingsButtonSpinClass = "spin-shown";
-      settingsButtonScaleClass = "scale-shown";
-      for (let i = 0; i < playerList.length; i++) {
-        playerList[i].stopTimer();
-      }
-      activePlayerIndex = -1;
-    } else {
-      settingsButtonSpinClass = "spin-hidden";
-      settingsButtonScaleClass = "scale-hidden";
+  function handleShowSettings() {
+    for (let i = 0; i < playerList.length; i++) {
+      playerList[i].stopTimer();
     }
+    activePlayerIndex = -1;
   }
 
   function handleRestartGame(event) {
     for (let i = 0; i < playerList.length; i++) {
       playerList[i].reset();
     }
-    toggleShowSettings();
     resetPlayerLifeTotalHistory();
   }
 </script>
@@ -77,40 +64,14 @@
       />
     {/each}
 
-    {#if showSettings}
-      <SettingsMenu on:restartGame={handleRestartGame} />
-    {/if}
-
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div
-      id="settings-button"
-      class="unselectable"
-      on:click={toggleShowSettings}
-    >
-      <i
-        class="fa-sharp fa-solid fa-gear {settingsButtonScaleClass} {settingsButtonSpinClass}"
-      />
-    </div>
+    <SettingsMenu
+      on:restartGame={handleRestartGame}
+      on:showSettings={handleShowSettings}
+    />
   </div>
 </div>
 
 <style>
-  .scale-shown {
-    scale: 0.95;
-  }
-
-  .scale-hidden {
-    scale: 0.75;
-  }
-
-  .spin-shown {
-    /* animation: fa-spin 60s infinite linear; */
-  }
-
-  .spin-hidden {
-    /* animation: fa-spin 180s infinite linear; */
-  }
-
   .top {
     position: fixed;
     top: 0;
@@ -124,24 +85,6 @@
     gap: 10px;
     width: 100vw;
     height: 100vh;
-  }
-
-  #settings-button {
-    display: flex;
-    position: absolute;
-    z-index: 100;
-    top: 50%;
-    left: 50%;
-    height: 60px;
-    width: 60px;
-    transform: translate(-50%, -50%);
-    color: #d1a215;
-    background-color: #403001;
-    border-radius: 25px;
-    border: 2px solid rgba(175, 175, 175, 0.6);
-    font-size: 55px;
-    justify-content: center;
-    align-items: center;
   }
 
   :global(.unselectable) {
