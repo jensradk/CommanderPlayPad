@@ -64,27 +64,33 @@
   }
 </script>
 
-{#if showSettings}
-  <SettingsMenu on:restartGame={handleRestartGame} />
-{/if}
+<div class="top">
+  <div class="grid">
+    {#each playerBaseClassList as playerBaseClass, i}
+      <Player
+        index={i}
+        baseClass={playerBaseClass}
+        bind:this={playerList[i]}
+        lifeTotal={get(startingLifeTotal)}
+        timeRemaining={get(startingTimeLeftSeconds)}
+        on:updateActivePlayer={handleUpdateActivePlayer}
+      />
+    {/each}
 
-<div class="grid">
-  {#each playerBaseClassList as playerBaseClass, i}
-    <Player
-      index={i}
-      baseClass={playerBaseClass}
-      bind:this={playerList[i]}
-      lifeTotal={get(startingLifeTotal)}
-      timeRemaining={get(startingTimeLeftSeconds)}
-      on:updateActivePlayer={handleUpdateActivePlayer}
-    />
-  {/each}
+    {#if showSettings}
+      <SettingsMenu on:restartGame={handleRestartGame} />
+    {/if}
 
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div id="settings-button" class="unselectable" on:click={toggleShowSettings}>
-    <i
-      class="fa-sharp fa-solid fa-gear {settingsButtonScaleClass} {settingsButtonSpinClass}"
-    />
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+      id="settings-button"
+      class="unselectable"
+      on:click={toggleShowSettings}
+    >
+      <i
+        class="fa-sharp fa-solid fa-gear {settingsButtonScaleClass} {settingsButtonSpinClass}"
+      />
+    </div>
   </div>
 </div>
 
@@ -103,6 +109,12 @@
 
   .spin-hidden {
     /* animation: fa-spin 180s infinite linear; */
+  }
+
+  .top {
+    position: fixed;
+    top: 0;
+    left: 0;
   }
 
   .grid {
