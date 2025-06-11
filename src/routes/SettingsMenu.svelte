@@ -89,7 +89,9 @@
       ><i class="fa fa-refresh" />Restart</button
     >
   </div>
-  <div class="grid-content">Color scheme picker</div>
+  <div class="grid-content">
+      <p>Space reserved for future use...perhaps just extend the life total history?</p>
+  </div>
 </div>
 {/if}
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -102,17 +104,15 @@
 <style>
   .grid-settings {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
     background-color: black;
     color: #d1a215;
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
     height: 100vh;
     z-index: 99;
-    opacity: 0.9;
+    opacity: 0.95;
   }
 
   .grid-content {
