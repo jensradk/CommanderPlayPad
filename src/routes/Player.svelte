@@ -1,357 +1,343 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { get } from "svelte/store";
-  import {
-    startingLifeTotal,
-    startingTimeLeftSeconds,
-    addToPlayerLifeTotalHistory,
-  } from "./stores";
+    import {createEventDispatcher} from "svelte";
+    import {get} from "svelte/store";
+    import {
+        startingLifeTotal,
+        startingTimeLeftSeconds,
+        addToPlayerLifeTotalHistory,
+        playerDataList
+    } from "./stores";
 
-  const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();
 
-  const LIFECHANGE_FADEOUT_DURATION_MS = 1000;
-  const LIFECHANGE_SHOW_DURATION_MS = 10000 - LIFECHANGE_FADEOUT_DURATION_MS;
+    const LIFECHANGE_FADEOUT_DURATION_MS = 1000;
+    const LIFECHANGE_SHOW_DURATION_MS = 10000 - LIFECHANGE_FADEOUT_DURATION_MS;
 
-  export let index;
-  export let lifeTotal;
-  export let timeRemaining;
-  export let baseClass;
-  let activeTimer = false;
-  let statusClass = "alive-player";
-  let activeClass = "inactive-player";
-  let lifeButtonClass = "inactive-life-button";
-  let lifeChangeClass = "hidden";
-  let lifeChange = 0;
-  let lifeChangeTimestamp = 0;
+    export let index;
+    export let lifeTotal;
+    export let timeRemaining;
+    export let baseClass;
 
-  function clicked() {
-    dispatch("updateActivePlayer", { index: index });
-  }
+    let activeTimer = false;
+    let statusClass = "alive-player";
+    let activeClass = "inactive-player";
+    let lifeChangeClass = "hidden";
+    let lifeChange = 0;
+    let lifeChangeTimestamp = 0;
+    let initialPulseDone = false;
 
-  function recordLifeChangeToHistory() {
-    if (lifeChange !== 0) {
-      addToPlayerLifeTotalHistory(index, {
-        lifeChange: lifeChange,
-        newLifeTotal: lifeTotal,
-      });
-    }
-  }
+    $: player = $playerDataList[index];
 
-  let intervalId = null;
-
-  export function startTimer() {
-    if (!isDead() && timeRemaining > 0) {
-      activeTimer = true;
-      intervalId = setInterval(() => {
-        timeRemaining--;
-        if (timeRemaining === 0) {
-          addToLife(-lifeTotal);
+    function clicked() {
+        dispatch("updateActivePlayer", {index: index});
+        if (activeClass !== "active-player") {
+            initialPulseDone = false;
         }
-      }, 1000);
-      activeClass = "active-player";
-      lifeButtonClass = "active-life-button";
-    }
-  }
-
-  export function stopTimer() {
-    activeTimer = false;
-    clearInterval(intervalId);
-    activeClass = "inactive-player";
-    if (isDead()) {
-      lifeButtonClass = "dead-life-button";
-    } else {
-      lifeButtonClass = "inactive-life-button";
-    }
-  }
-
-  export function reset() {
-    activeTimer = false;
-    clearInterval(intervalId);
-    lifeTotal = get(startingLifeTotal);
-    timeRemaining = get(startingTimeLeftSeconds);
-    statusClass = "alive-player";
-    activeClass = "inactive-player";
-    lifeButtonClass = "inactive-life-button";
-  }
-
-  function isDead() {
-    return lifeTotal <= 0;
-  }
-
-  function addToLife(value) {
-    lifeTotal = Math.max(0, lifeTotal + value);
-    lifeChange = lifeChange + value;
-    if (lifeChangeTimestamp === 0) {
-      lifeChangeClass = "show-me";
-    }
-    lifeChangeTimestamp = Date.now();
-
-    if (lifeTotal <= 0) {
-      stopTimer();
-      statusClass = "dead-player";
-      lifeButtonClass = "dead-life-button";
-    } else if (lifeTotal > 0) {
-      statusClass = "alive-player";
-      lifeButtonClass =
-        activeClass === "active-player"
-          ? "active-life-button"
-          : "inactive-life-button";
     }
 
-    /*
-        This sets a timeout that hides the lifeChange.
-        Only allow the hiding if the timestamp is unchanged since the timeout started.
-        This makes sure that only the last timeout does something
-     */
-    setTimeout(
-      (changeTimestamp) => {
-        if (changeTimestamp === lifeChangeTimestamp) {
-          lifeChangeClass = "hide-me";
-          setTimeout(() => {
-            recordLifeChangeToHistory();
-            lifeChange = 0;
-            lifeChangeTimestamp = 0;
-          }, LIFECHANGE_FADEOUT_DURATION_MS);
+    function recordLifeChangeToHistory() {
+        if (lifeChange !== 0) {
+            addToPlayerLifeTotalHistory(index, {
+                lifeChange: lifeChange,
+                newLifeTotal: lifeTotal,
+            });
         }
-      },
-      LIFECHANGE_SHOW_DURATION_MS,
-      lifeChangeTimestamp
-    );
-    return lifeTotal;
-  }
+    }
+
+    let intervalId = null;
+
+    export function startTimer() {
+        if (!isDead() && timeRemaining > 0) {
+            activeTimer = true;
+            intervalId = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining === 0) {
+                    addToLife(-lifeTotal);
+                }
+            }, 1000);
+            activeClass = "active-player";
+        }
+    }
+
+    export function stopTimer() {
+        activeTimer = false;
+        clearInterval(intervalId);
+        activeClass = "inactive-player";
+        initialPulseDone = false;
+    }
+
+    export function reset() {
+        activeTimer = false;
+        clearInterval(intervalId);
+        lifeTotal = get(startingLifeTotal);
+        timeRemaining = get(startingTimeLeftSeconds);
+        statusClass = "alive-player";
+        activeClass = "inactive-player";
+    }
+
+    function isDead() {
+        return lifeTotal <= 0;
+    }
+
+    function addToLife(value) {
+        lifeTotal = Math.max(0, lifeTotal + value);
+        lifeChange = lifeChange + value;
+        if (lifeChangeTimestamp === 0) {
+            lifeChangeClass = "show-me";
+        }
+        lifeChangeTimestamp = Date.now();
+
+        if (lifeTotal <= 0) {
+            stopTimer();
+            statusClass = "dead-player";
+        } else if (lifeTotal > 0) {
+            statusClass = "alive-player";
+        }
+
+        /*
+            This sets a timeout that hides the lifeChange.
+            Only allow the hiding if the timestamp is unchanged since the timeout started.
+            This makes sure that only the last timeout does something
+         */
+        setTimeout(
+            (changeTimestamp) => {
+                if (changeTimestamp === lifeChangeTimestamp) {
+                    lifeChangeClass = "hide-me";
+                    setTimeout(() => {
+                        recordLifeChangeToHistory();
+                        lifeChange = 0;
+                        lifeChangeTimestamp = 0;
+                    }, LIFECHANGE_FADEOUT_DURATION_MS);
+                }
+            },
+            LIFECHANGE_SHOW_DURATION_MS,
+            lifeChangeTimestamp
+        );
+        return lifeTotal;
+    }
 </script>
 
-<div class="{baseClass} {statusClass} {activeClass} unselectable">
-  <div class="life-total">
-    <button
-      class={lifeButtonClass}
-      on:click={() => {
-        addToLife(-1);
-      }}>−</button
-    >
+<div class="{baseClass} {statusClass} {activeClass} unselectable"
+     style="background-color: {player.color}"
+>
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div on:click={clicked} style="flex: 1;">
-      <div
-        class={lifeChangeClass}
-        style="display: flex; font-size: 5vh; position:relative; align-items:center; justify-content: center;"
-      >
-        {lifeChange > 0 ? "+" + lifeChange : lifeChange}
-      </div>
-      <h1>{lifeTotal}</h1>
+    <div on:click={clicked} role="button" tabindex="0" class="container-all">
+        <div class="player-name">
+            {player.name}
+        </div>
+
+        <div class="time-and-pulse-container">
+            <div class="time-remaining">
+                {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
+                .toString()
+                .padStart(2, "0")}
+            </div>
+            <div class="pulse-line"
+                 class:pulse-line-initial={!initialPulseDone && activeClass === 'active-player'}
+                 class:pulse-line-active={initialPulseDone && activeClass === 'active-player'}
+                 style="background: linear-gradient(90deg, {player.color} 0%, #000 50%, {player.color} 100%);"
+                 on:animationend={() => { initialPulseDone = true; }}>
+            </div>
+        </div>
+
+        <div class="life-container">
+            <button style="background-color: {player.lifeButtonColor}"
+                    class="life-change-button"
+                    on:click={(event) => {
+                        event.stopPropagation();
+                        addToLife(-1);
+                    }}>
+                -
+            </button>
+
+            <div class="life-total-and-change-text">
+                <div class="life-change-container">
+                    <div class={lifeChangeClass}>
+                        {lifeChange > 0 ? "+" + lifeChange : lifeChange}
+                    </div>
+                </div>
+                <div class="life-total">
+                    {lifeTotal}
+                </div>
+            </div>
+
+            <button style="background-color: {player.lifeButtonColor}"
+                    class="life-change-button" on:click={(event) => {
+                        event.stopPropagation();
+                        addToLife(1);
+                    }}>
+                +
+            </button>
+        </div>
     </div>
-    <button
-      class={lifeButtonClass}
-      on:click={() => {
-        addToLife(1);
-      }}>+</button
-    >
-  </div>
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <div class="timer" on:click={clicked}>
-    <div class="time-remaining">
-      {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
-        .toString()
-        .padStart(2, "0")}
-    </div>
-  </div>
 </div>
 
 <style>
-  :root {
-    /* Brown and orange */
-    --color-active-a: #977612;
-    --color-active-b: #d1a215;
-    --color-inactive-a: #403001;
-    --color-inactive-b: #6b5101;
-    --color-player-dead: #501818;
-
-    /** Steel and green
-    --color-active-a: #143b15;
-    --color-active-b: #0C4F0E;
-    --color-inactive-a: #646464;
-    --color-inactive-b: #919090;
-    --color-player-dead: #3b1212;
-    */
-  }
-
-  .hide-me {
-    animation: fadeOut ease-in 450ms;
-    animation-fill-mode: forwards;
-  }
-
-  @keyframes fadeOut {
-    0% {
-      opacity: 0.75;
-      top: 0em;
+    .container-all {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-rows: 20% 40% 40%;
     }
-    95% {
-      opacity: 0.25;
+
+    .player-name {
+        font-size: 6vh;
+        text-align: center;
+        align-content: center;
     }
-    100% {
-      opacity: 0;
-      top: -0.5em;
+
+    .time-and-pulse-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
-  }
 
-  .show-me {
-    animation: fadeIn ease-out 225ms;
-    animation-fill-mode: forwards;
-  }
-
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
+    .time-remaining {
+        font-size: 15vh;
+        align-content: center;
+        text-align: center;
+        margin: 0;
+        padding: 0;
     }
-    100% {
-      opacity: 0.75;
+
+    .pulse-line {
+        width: 60%;
+        height: 0.5vh;
+        margin: 0 auto;
+        border-radius: 10px;
+        opacity: 0;
+        position: relative;
+        left: 0;
+        transition: background 0.3s, opacity 0.3s;
+        filter: brightness(1);
     }
-  }
 
-  .hidden {
-    opacity: 0;
-  }
-
-  .player-field {
-    font-family: sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #3f3f3f;
-    border-radius: 10px;
-  }
-
-  .active-player {
-    color: var(--color-inactive-b);
-    background: linear-gradient(
-      0deg,
-      var(--color-active-a) 0%,
-      var(--color-active-b) 100%
-    );
-    background-size: 100% 400%;
-    /* animation: gradient 5s ease-in-out infinite;
-    -webkit-transition: all 225ms linear;
-    -moz-transition: all 225ms linear;
-    -o-transition: all 225ms linear;
-    transition: all 225ms linear; */
-  }
-
-  @keyframes gradient {
-    0% {
-      background-position: 100% 100%;
+    .pulse-line-initial {
+        opacity: 1;
+        animation: pulse-width-initial 5s ease-in;
     }
-    50% {
-      background-position: 0% 0%;
+
+    @keyframes pulse-width-initial {
+        0% { width: 0; }
+        100% { width: 75%; }
     }
-    100% {
-      background-position: 100% 100%;
+
+    .pulse-line-active {
+        opacity: 1;
+        animation: pulse-width 10s ease-in-out infinite;
     }
-  }
 
-  .active-life-button {
-    color: var(--color-inactive-b);
-    background-image: linear-gradient(
-      to top,
-      var(--color-active-b) 0%,
-      var(--color-active-a) 100%
-    );
-    -webkit-transition: all 225ms linear;
-    -moz-transition: all 225ms linear;
-    -o-transition: all 225ms linear;
-    transition: all 225ms linear;
-  }
+    @keyframes pulse-width {
+        0% { width: 75%; }
+        50% { width: 10%; }
+        100% { width: 75%; }
+    }
 
-  .inactive-player {
-    color: var(--color-active-a);
-    background-image: linear-gradient(
-      to top,
-      var(--color-inactive-b) 0%,
-      var(--color-inactive-a) 100%
-    );
-    -webkit-transition: all 450ms linear;
-    -moz-transition: all 450ms linear;
-    -o-transition: all 450ms linear;
-    transition: all 450ms linear;
-  }
+    .life-container {
+        display: grid;
+        grid-template-columns: 35% 30% 35%;
+    }
 
-  .inactive-life-button {
-    color: var(--color-active-a);
-    background-image: linear-gradient(
-      to top,
-      var(--color-inactive-b) 0%,
-      var(--color-inactive-a) 100%
-    );
-    -webkit-transition: all 450ms linear;
-    -moz-transition: all 450ms linear;
-    -o-transition: all 450ms linear;
-    transition: all 450ms linear;
-  }
+    .life-change-button {
+        margin: auto;
+        padding: 0;
+        width: 80%;
+        height: 80%;
+        font-size: 5vh;
+        border-radius: 5px;
+        border: 2px solid rgba(0, 0, 0);
+    }
 
-  .dead-player {
-    background-image: linear-gradient(
-      to top,
-      var(--color-player-dead) 0%,
-      var(--color-player-dead) 100%
-    );
-  }
+    .life-total-and-change-text {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
 
-  .dead-life-button {
-    color: var(--color-active-a);
-    background-image: linear-gradient(
-      to top,
-      var(--color-player-dead) 0%,
-      var(--color-player-dead) 100%
-    );
-  }
+    .life-total {
+        font-size: 12vh;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -40%);
+        z-index: 1;
+    }
 
-  .upside-down {
-    rotate: 180deg;
-  }
+    .life-change-container {
+        font-size: 4vh;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -175%);
+        z-index: 2;
+    }
 
-  .life-total {
-    font-size: 15vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    flex: 1;
-    display: flex;
-  }
+    .life-change-container > div {
+        width: 6vh;
+        height: 6vh;
+        border-radius: 50%;
+        background: rgba(200,200,200,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4vh;
+        color: #000;
+        margin: 0 auto;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        border: 1px solid rgba(0,0,0,0.45)
+    }
 
-  .life-total button {
-    font-size: 15vh;
-    flex: 0 0 25%;
-    margin: 0rem;
-    padding: 0px;
-    height: 100%;
-    border-radius: 10px;
-    border: 2px solid rgba(175, 175, 175, 0.6);
-    opacity: 1;
-  }
+    .player-field {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+        justify-content: space-evenly;
+        border: 2px solid #000000;
+        border-radius: 10px;
+    }
 
-  .life-total h1 {
-    font-size: 14vh;
-    flex-grow: inherit;
-    text-align: center;
-    margin: 0px;
-    vertical-align: middle;
-  }
+    .show-me {
+        animation: fadeIn ease-out 225ms;
+        animation-fill-mode: forwards;
+    }
 
-  .timer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    border-radius: 5px;
-    flex: 0 0 50%;
-  }
+    @keyframes fadeOut {
+        0% {
+            opacity: 0.75;
+            top: 0em;
+        }
+        95% {
+            opacity: 0.25;
+        }
+        100% {
+            opacity: 0;
+            top: -0.5em;
+        }
+    }
 
-  .timer button {
-    margin: 0px;
-  }
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 0.75;
+        }
+    }
 
-  .time-remaining {
-    font-size: 10vh;
-    margin-right: 0rem;
-  }
+    .hidden {
+        opacity: 0;
+    }
+
+    .hide-me {
+        animation: fadeOut ease-in 450ms;
+        animation-fill-mode: forwards;
+    }
+
+    .upside-down {
+        rotate: 180deg;
+    }
 </style>

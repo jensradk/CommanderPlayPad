@@ -54,7 +54,7 @@
 <div class="top">
   <div class="grid">
     {#each playerBaseClassList as playerBaseClass, i}
-      <Player
+      <Player class="{playerBaseClass}"
         index={i}
         baseClass={playerBaseClass}
         bind:this={playerList[i]}
@@ -80,9 +80,9 @@
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
+    gap: 0;
     width: 100vw;
     height: 100vh;
   }
