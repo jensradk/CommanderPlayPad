@@ -5,6 +5,7 @@
         startingLifeTotal,
         startingTimeLeftSeconds,
         addToPlayerLifeTotalHistory,
+        setPlayerName,
         playerDataList
     } from "./stores";
 
@@ -25,6 +26,8 @@
     let lifeChange = 0;
     let lifeChangeTimestamp = 0;
     let initialPulseDone = false;
+    let showNameModal = false;
+    let newName = "";
 
     $: player = $playerDataList[index];
 
@@ -115,6 +118,19 @@
         );
         return lifeTotal;
     }
+
+    function openNameModal() {
+        newName = player.name;
+        showNameModal = true;
+    }
+
+    function submitNameChange() {
+        if (newName.trim() !== "") {
+            newName = newName.slice(0, 12);
+            setPlayerName(index, newName.trim());
+        }
+        showNameModal = false;
+    }
 </script>
 
 <div class="{baseClass} {statusClass} {activeClass} unselectable"
@@ -122,7 +138,10 @@
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div on:click={clicked} role="button" tabindex="0" class="container-all">
-        <div class="player-name">
+        <div class="player-name" role="button" tabindex="1" on:click={(event) => {
+            event.stopPropagation();
+            openNameModal();
+        }}>
             {player.name}
         </div>
 
@@ -170,6 +189,19 @@
             </button>
         </div>
     </div>
+    {#if showNameModal}
+        <div class="modal-backdrop" on:click={() => showNameModal = false}></div>
+        <div class="modal">
+            <input
+                    type="text"
+                    bind:value={newName}
+                    on:keydown={(e) => e.key === "Enter" && submitNameChange()}
+                    autofocus
+            />
+            <button on:click={submitNameChange}>OK</button>
+            <button on:click={() => showNameModal = false}>Cancel</button>
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -339,5 +371,26 @@
 
     .upside-down {
         rotate: 180deg;
+    }
+
+    .modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.75);
+        z-index: 1000;
+    }
+    .modal {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background: #aaa;
+        padding: 2em;
+        border-radius: 8px;
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        min-width: 200px;
+        align-items: center;
     }
 </style>

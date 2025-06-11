@@ -9,22 +9,22 @@ export const startingTimeLeftSeconds = derived(
 
 export const playerDataList = writable([
   {
-    name: "Player 1",
+    name: "",
     color: "#d02020",
     lifeButtonColor: "#a91919"
   },
   {
-    name: "Player 2",
+    name: "",
     color: "#408ccb",
     lifeButtonColor: "#33709f"
   },
   {
-    name: "Player 3",
+    name: "",
     color: "#9b980c",
     lifeButtonColor: "#706f09"
   },
   {
-    name: "Player 4",
+    name: "",
     color: "#0f9b02",
     lifeButtonColor: "#096c01"
   },
@@ -32,19 +32,19 @@ export const playerDataList = writable([
 
 export const playerLifeTotalHistoryList = writable([
   {
-    name: "Player 1",
+    name: "",
     entryList: [],
   },
   {
-    name: "Player 2",
+    name: "",
     entryList: [],
   },
   {
-    name: "Player 3",
+    name: "",
     entryList: [],
   },
   {
-    name: "Player 4",
+    name: "",
     entryList: [],
   },
 ]);
@@ -55,6 +55,17 @@ export const addToPlayerLifeTotalHistory = (playerIndex, lifeChangeData) => {
     return val;
   });
 };
+
+export const setPlayerName = (playerIndex, newName) => {
+  playerDataList.update((val) => {
+    val[playerIndex].name = newName;
+    return val;
+  });
+  playerLifeTotalHistoryList.update((val) => {
+    val[playerIndex].name = newName;
+    return val;
+  });
+}
 
 export const resetPlayerLifeTotalHistory = () => {
   playerLifeTotalHistoryList.update((val) => {

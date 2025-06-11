@@ -7,7 +7,26 @@
     startingLifeTotal,
     startingTimeLeftSeconds,
     resetPlayerLifeTotalHistory,
+    setPlayerName,
   } from "./stores";
+
+  const nameList = [
+    "Yawgmoth",
+    "Jace",
+    "Liliana",
+    "Vraska",
+    "Tamiyo",
+    "Tezzeret",
+    "Nahiri",
+    "Sorin",
+    "Urza",
+    "Emrakul",
+    "Eladamri",
+    "Avacyn",
+    "Fblthp",
+    "Teferi",
+    "John",
+  ];
 
   let playerList = [4];
   let playerBaseClassList = [
@@ -18,7 +37,17 @@
   ];
   let activePlayerIndex = -1;
 
-  onMount(resetPlayerLifeTotalHistory);
+  onMount(() => {
+    resetPlayerLifeTotalHistory();
+    setRandomPlayerNames();
+  });
+
+  function setRandomPlayerNames() {
+    let randomNames = nameList.slice().sort(() => Math.random() - 0.5).slice(0, playerList.length);
+    for (let i = 0; i < playerList.length; i++) {
+      setPlayerName(i, randomNames[i]);
+    }
+  }
 
   function handleUpdateActivePlayer(event) {
     let playerIndex = event.detail.index;
