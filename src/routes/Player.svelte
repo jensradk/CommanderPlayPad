@@ -192,14 +192,14 @@
     {#if showNameModal}
         <div class="modal-backdrop" on:click={() => showNameModal = false}></div>
         <div class="modal">
-            <input
+            <h3>Type new player name:</h3>
+            <input class="new-name-input"
                     type="text"
                     bind:value={newName}
                     on:keydown={(e) => e.key === "Enter" && submitNameChange()}
                     autofocus
             />
             <button on:click={submitNameChange}>OK</button>
-            <button on:click={() => showNameModal = false}>Cancel</button>
         </div>
     {/if}
 </div>
@@ -392,5 +392,9 @@
         gap: 1em;
         min-width: 200px;
         align-items: center;
+    }
+
+    .new-name-input {
+        font-size: 2em
     }
 </style>
