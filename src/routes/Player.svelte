@@ -5,6 +5,7 @@
         startingLifeTotal,
         startingTimeLeftSeconds,
         addToPlayerLifeTotalHistory,
+        setPlayerName,
         playerDataList
     } from "./stores";
 
@@ -122,7 +123,7 @@
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div on:click={clicked} role="button" tabindex="0" class="container-all">
-        <div class="player-name">
+        <div class="player-name" role="button" tabindex="0">
             {player.name}
         </div>
 
@@ -185,6 +186,11 @@
         font-size: 6vh;
         text-align: center;
         align-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
     }
 
     .time-and-pulse-container {
@@ -220,8 +226,12 @@
     }
 
     @keyframes pulse-width-initial {
-        0% { width: 0; }
-        100% { width: 75%; }
+        0% {
+            width: 0;
+        }
+        100% {
+            width: 75%;
+        }
     }
 
     .pulse-line-active {
@@ -230,9 +240,15 @@
     }
 
     @keyframes pulse-width {
-        0% { width: 75%; }
-        50% { width: 10%; }
-        100% { width: 75%; }
+        0% {
+            width: 75%;
+        }
+        50% {
+            width: 10%;
+        }
+        100% {
+            width: 75%;
+        }
     }
 
     .life-container {
@@ -278,15 +294,15 @@
         width: 6vh;
         height: 6vh;
         border-radius: 50%;
-        background: rgba(200,200,200,0.4);
+        background: rgba(200, 200, 200, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 4vh;
         color: #000;
         margin: 0 auto;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        border: 1px solid rgba(0,0,0,0.45)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.45)
     }
 
     .player-field {
