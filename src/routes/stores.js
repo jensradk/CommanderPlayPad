@@ -1,6 +1,6 @@
 import { writable, derived, get } from "svelte/store";
 
-export const startingLifeTotal = writable(4);
+export const startingLifeTotal = writable(40);
 export const startingTimeLeftMinutes = writable(23);
 export const startingTimeLeftSeconds = derived(
   startingTimeLeftMinutes,
