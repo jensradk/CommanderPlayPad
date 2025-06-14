@@ -90,10 +90,7 @@
             </div>
         </div>
         <SettingsMenuLifeTotalHistory
-                on:openChangeNameModal = {(event) => {
-                    console.log(`Settings: Opening change name modal for player ${event.detail.playerIndex}: ${event.detail.playerName}`);
-                    dispatch("openChangeNameModal", event.detail)
-                }}
+                on:openChangeNameModal
         />
         <div class="grid-content">
             <button class="restart-button" on:click={restartClicked}

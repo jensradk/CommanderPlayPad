@@ -1,12 +1,12 @@
 <script>
     import {createEventDispatcher} from "svelte";
     import {get} from "svelte/store";
+    import CommanderDamage from "./CommanderDamage.svelte";
     import {
         startingLifeTotal,
         startingTimeLeftSeconds,
+        playerDataList,
         addToPlayerLifeTotalHistory,
-        setPlayerName,
-        playerDataList
     } from "./stores";
 
     const dispatch = createEventDispatcher();
@@ -18,6 +18,7 @@
     export let lifeTotal;
     export let timeRemaining;
     export let baseClass;
+    export let commanderDamageGivenList;
 
     let activeTimer = false;
     let statusClass = "alive-player";
@@ -80,8 +81,9 @@
         return lifeTotal <= 0;
     }
 
-    function addToLife(value) {
-        lifeTotal = Math.max(0, lifeTotal + value);
+    export function addToLife(value) {
+        lifeTotal += value;
+
         lifeChange = lifeChange + value;
         if (lifeChangeTimestamp === 0) {
             lifeChangeClass = "show-me";
@@ -116,6 +118,10 @@
         );
         return lifeTotal;
     }
+
+    $: otherPlayers = $playerDataList
+        .map((p, i) => ({ ...p, index: i }))
+        .filter(p => p.index !== index);
 </script>
 
 <div class="{baseClass} {statusClass} {activeClass} unselectable"
@@ -123,6 +129,19 @@
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div on:click={clicked} role="button" tabindex="0" class="container-all">
+        <div class="commander-damage-container">
+            {#each otherPlayers as other}
+                <CommanderDamage
+                        playerIndex={index}
+                        enemyIndex={other.index}
+                        enemyName="{other.name}"
+                        enemyColor="{other.color}"
+                        enemyColorSecondary="{other.colorSecondary}"
+                        commanderDamageGiven = {commanderDamageGivenList[other.index] || 0}
+                        on:addToCommanderDamage/>
+            {/each}
+        </div>
+
         <div class="player-name" role="button" tabindex="0">
             {player.name}
         </div>
@@ -142,7 +161,7 @@
         </div>
 
         <div class="life-container">
-            <button style="background-color: {player.lifeButtonColor}"
+            <button style="background-color: {player.colorSecondary}"
                     class="life-change-button"
                     on:click={(event) => {
                         event.stopPropagation();
@@ -162,7 +181,7 @@
                 </div>
             </div>
 
-            <button style="background-color: {player.lifeButtonColor}"
+            <button style="background-color: {player.colorSecondary}"
                     class="life-change-button" on:click={(event) => {
                         event.stopPropagation();
                         addToLife(1);
@@ -179,11 +198,20 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 20% 40% 40%;
+        grid-template-rows: 18% 12% 35% 35%;
+    }
+
+    .commander-damage-container {
+        width: 90%;
+        height: 100%;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0 1em;
     }
 
     .player-name {
-        font-size: 6vh;
+        font-size: 3em;
         text-align: center;
         align-content: center;
         white-space: nowrap;
@@ -201,7 +229,7 @@
     }
 
     .time-remaining {
-        font-size: 15vh;
+        font-size: 7em;
         align-content: center;
         text-align: center;
         margin: 0;

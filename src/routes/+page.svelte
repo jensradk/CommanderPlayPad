@@ -8,8 +8,11 @@
     import {
         startingLifeTotal,
         startingTimeLeftSeconds,
+        playerDataList,
         resetPlayerLifeTotalHistory,
+        resetCommanderDamageGiven,
         setPlayerName,
+        addToPlayerCommanderDamageGiven,
     } from "./stores";
 
     let playerList = [4];
@@ -24,6 +27,7 @@
 
     onMount(() => {
         resetPlayerLifeTotalHistory();
+        // resetCommanderDamageGiven();
         setRandomPlayerNames();
     });
 
@@ -62,13 +66,14 @@
             playerList[i].reset();
         }
         resetPlayerLifeTotalHistory();
+        resetCommanderDamageGiven();
     }
 
     let changeNameModalShow = false;
     let changeNameModalExistingName = "";
     let changeNameModalPlayerIndex = -1;
 
-    function openChangeNameModalF(playerIndex, playerName) {
+    function openChangeNameModal(playerIndex, playerName) {
         changeNameModalExistingName = playerName;
         changeNameModalPlayerIndex = playerIndex;
         changeNameModalShow = true;
@@ -80,39 +85,65 @@
         }
         changeNameModalShow = false;
     }
+
+    function handleCommanderDamageGiven(event) {
+        let playerIndex = event.detail.playerIndex;
+        let enemyIndex = event.detail.enemyIndex;
+        let damage = event.detail.value;
+        function canAddToCommanderDamage(playerIndex, enemyIndex, damage) {
+            if (enemyIndex >= 0 && enemyIndex < playerList.length) {
+                if (damage > 0) {
+                    return $playerDataList[playerIndex].commanderDamageGivenList[enemyIndex] < 21;
+                } else if (damage < 0) {
+                    return $playerDataList[playerIndex].commanderDamageGivenList[enemyIndex] > 0;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        console.log(`Page: Commander damage given for player ${playerIndex} against enemy ${enemyIndex}`);
+        if (canAddToCommanderDamage(playerIndex, enemyIndex, damage)) {
+            addToPlayerCommanderDamageGiven(playerIndex, enemyIndex, damage);
+            playerList[enemyIndex].addToLife(-damage);
+        }
+    }
+
 </script>
 
 <div class="top">
     <div class="grid">
-        {#each playerBaseClassList as playerBaseClass, i}
-            <Player class="{playerBaseClass}"
+        {#each $playerDataList as playerData, i}
+            <Player class="{playerBaseClassList[i]}"
                     index={i}
-                    baseClass={playerBaseClass}
                     bind:this={playerList[i]}
+                    baseClass={playerBaseClassList[i]}
                     lifeTotal={get(startingLifeTotal)}
                     timeRemaining={get(startingTimeLeftSeconds)}
+                    commanderDamageGivenList={playerData.commanderDamageGivenList}
                     on:updateActivePlayer={handleUpdateActivePlayer}
+                    on:addToCommanderDamage={handleCommanderDamageGiven}
             />
         {/each}
 
         <SettingsMenu
-            on:restartGame={handleRestartGame}
-            on:showSettings={handleShowSettings}
-            on:openChangeNameModal={(event) => {
+                on:restartGame={handleRestartGame}
+                on:showSettings={handleShowSettings}
+                on:openChangeNameModal={(event) => {
             console.log(`Page: Opening change name modal for player ${event.detail.playerIndex}: ${event.detail.playerName}`);
-            openChangeNameModalF(event.detail.playerIndex, event.detail.playerName);
+            openChangeNameModal(event.detail.playerIndex, event.detail.playerName);
         }}
         />
     </div>
     {#if changeNameModalShow}
         <ChangeNameModal
-            playerName={changeNameModalExistingName}
-            playerIndex={changeNameModalPlayerIndex}
-            on:nameChanged={(event) => {
+                playerName={changeNameModalExistingName}
+                playerIndex={changeNameModalPlayerIndex}
+                on:nameChanged={(event) => {
             console.log(`Name changed for player ${event.detail.playerIndex}: ${event.detail.playerName}`);
             submitNameChange(event.detail.playerIndex, event.detail.playerName);
         }}
-            on:closeChangeNameModal={() => {
+                on:closeChangeNameModal={() => {
             changeNameModalShow = false;
         }}
         />
