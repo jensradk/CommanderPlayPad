@@ -1,6 +1,6 @@
 import { writable, derived, get } from "svelte/store";
 
-export const startingLifeTotal = writable(40);
+export const startingLifeTotal = writable(4);
 export const startingTimeLeftMinutes = writable(23);
 export const startingTimeLeftSeconds = derived(
   startingTimeLeftMinutes,
@@ -9,24 +9,28 @@ export const startingTimeLeftSeconds = derived(
 
 export const playerDataList = writable([
   {
-    name: "",
+    name: "John 1",
     color: "#d02020",
-    lifeButtonColor: "#a91919"
+    colorSecondary: "#a91919",
+    commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "",
+    name: "John 2",
     color: "#408ccb",
-    lifeButtonColor: "#33709f"
+    colorSecondary: "#33709f",
+    commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "",
+    name: "John 3",
     color: "#9b980c",
-    lifeButtonColor: "#706f09"
+    colorSecondary: "#706f09",
+    commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "",
+    name: "John 4",
     color: "#0f9b02",
-    lifeButtonColor: "#096c01"
+    colorSecondary: "#096c01",
+    commanderDamageGivenList: [0, 0, 0, 0],
   },
 ]);
 
@@ -49,6 +53,22 @@ export const playerLifeTotalHistoryList = writable([
   },
 ]);
 
+export const addToPlayerCommanderDamageGiven = (playerIndex, enemyIndex, damageGiven) => {
+  console.log(`Store: Adding ${damageGiven} damage from player ${playerIndex} to enemy ${enemyIndex}`);
+  playerDataList.update((val) =>
+    val.map((playerData, idx) =>
+      idx === playerIndex
+        ? {
+          ...playerData,
+          commanderDamageGivenList: playerData.commanderDamageGivenList.map((damage, i) =>
+            i === enemyIndex ? damage + damageGiven : damage
+          ),
+        }
+        : playerData
+    )
+  );
+}
+
 export const addToPlayerLifeTotalHistory = (playerIndex, lifeChangeData) => {
   playerLifeTotalHistoryList.update((val) => {
     val[playerIndex].entryList.push(lifeChangeData);
@@ -57,6 +77,7 @@ export const addToPlayerLifeTotalHistory = (playerIndex, lifeChangeData) => {
 };
 
 export const setPlayerName = (playerIndex, newName) => {
+  newName = newName.trim();
   playerDataList.update((val) => {
     val[playerIndex].name = newName;
     return val;
@@ -66,6 +87,15 @@ export const setPlayerName = (playerIndex, newName) => {
     return val;
   });
 }
+
+export const resetCommanderDamageGiven = () => {
+  playerDataList.update((val) =>
+    val.map((playerData) => ({
+      ...playerData,
+      commanderDamageGivenList: [0, 0, 0, 0],
+    }))
+  );
+};
 
 export const resetPlayerLifeTotalHistory = () => {
   playerLifeTotalHistoryList.update((val) => {
