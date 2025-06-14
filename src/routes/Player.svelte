@@ -26,8 +26,6 @@
     let lifeChange = 0;
     let lifeChangeTimestamp = 0;
     let initialPulseDone = false;
-    let showNameModal = false;
-    let newName = "";
 
     $: player = $playerDataList[index];
 
@@ -118,19 +116,6 @@
         );
         return lifeTotal;
     }
-
-    function openNameModal() {
-        newName = player.name;
-        showNameModal = true;
-    }
-
-    function submitNameChange() {
-        if (newName.trim() !== "") {
-            newName = newName.slice(0, 12);
-            setPlayerName(index, newName.trim());
-        }
-        showNameModal = false;
-    }
 </script>
 
 <div class="{baseClass} {statusClass} {activeClass} unselectable"
@@ -138,10 +123,7 @@
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div on:click={clicked} role="button" tabindex="0" class="container-all">
-        <div class="player-name" role="button" tabindex="1" on:click={(event) => {
-            event.stopPropagation();
-            openNameModal();
-        }}>
+        <div class="player-name" role="button" tabindex="0">
             {player.name}
         </div>
 
@@ -189,19 +171,6 @@
             </button>
         </div>
     </div>
-    {#if showNameModal}
-        <div class="modal-backdrop" on:click={() => showNameModal = false}></div>
-        <div class="modal">
-            <h3>Type new player name:</h3>
-            <input class="new-name-input"
-                    type="text"
-                    bind:value={newName}
-                    on:keydown={(e) => e.key === "Enter" && submitNameChange()}
-                    autofocus
-            />
-            <button on:click={submitNameChange}>OK</button>
-        </div>
-    {/if}
 </div>
 
 <style>
@@ -217,6 +186,11 @@
         font-size: 6vh;
         text-align: center;
         align-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: inline-block;
     }
 
     .time-and-pulse-container {
@@ -252,8 +226,12 @@
     }
 
     @keyframes pulse-width-initial {
-        0% { width: 0; }
-        100% { width: 75%; }
+        0% {
+            width: 0;
+        }
+        100% {
+            width: 75%;
+        }
     }
 
     .pulse-line-active {
@@ -262,9 +240,15 @@
     }
 
     @keyframes pulse-width {
-        0% { width: 75%; }
-        50% { width: 10%; }
-        100% { width: 75%; }
+        0% {
+            width: 75%;
+        }
+        50% {
+            width: 10%;
+        }
+        100% {
+            width: 75%;
+        }
     }
 
     .life-container {
@@ -310,15 +294,15 @@
         width: 6vh;
         height: 6vh;
         border-radius: 50%;
-        background: rgba(200,200,200,0.4);
+        background: rgba(200, 200, 200, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 4vh;
         color: #000;
         margin: 0 auto;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        border: 1px solid rgba(0,0,0,0.45)
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.45)
     }
 
     .player-field {
@@ -371,30 +355,5 @@
 
     .upside-down {
         rotate: 180deg;
-    }
-
-    .modal-backdrop {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.75);
-        z-index: 1000;
-    }
-    .modal {
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        background: #aaa;
-        padding: 2em;
-        border-radius: 8px;
-        z-index: 1001;
-        display: flex;
-        flex-direction: column;
-        gap: 1em;
-        min-width: 200px;
-        align-items: center;
-    }
-
-    .new-name-input {
-        font-size: 2em
     }
 </style>
