@@ -11,7 +11,7 @@
 
     const dispatch = createEventDispatcher();
 
-    const LIFECHANGE_FADEOUT_DURATION_MS = 1000;
+    const LIFECHANGE_FADEOUT_DURATION_MS = 2000;
     const LIFECHANGE_SHOW_DURATION_MS = 10000 - LIFECHANGE_FADEOUT_DURATION_MS;
 
     export let index;
