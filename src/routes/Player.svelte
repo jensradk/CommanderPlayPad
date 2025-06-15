@@ -46,12 +46,12 @@
         }
     }
 
-    let intervalId = null;
+    let playerTimerIntervalHandler = null;
 
     export function startTimer() {
         if (!isDead() && timeRemaining > 0) {
             activeTimer = true;
-            intervalId = setInterval(() => {
+            playerTimerIntervalHandler = setInterval(() => {
                 timeRemaining--;
                 if (timeRemaining === 0) {
                     addToLife(-lifeTotal);
@@ -63,14 +63,16 @@
 
     export function stopTimer() {
         activeTimer = false;
-        clearInterval(intervalId);
+        clearInterval(playerTimerIntervalHandler);
         activeClass = "inactive-player";
         initialPulseDone = false;
     }
 
     export function reset() {
         activeTimer = false;
-        clearInterval(intervalId);
+        clearInterval(playerTimerIntervalHandler);
+        clearTimeout(lifeChangeTimeoutHandler);
+        lifeChangeClass = "hidden";
         lifeTotal = get(startingLifeTotal);
         timeRemaining = get(startingTimeLeftSeconds);
         statusClass = "alive-player";
@@ -80,6 +82,8 @@
     function isDead() {
         return lifeTotal <= 0;
     }
+
+    let lifeChangeTimeoutHandler = null;
 
     export function addToLife(value) {
         lifeTotal += value;
@@ -102,12 +106,13 @@
             Only allow the hiding if the timestamp is unchanged since the timeout started.
             This makes sure that only the last timeout does something
          */
-        setTimeout(
-            (changeTimestamp) => {
+        lifeChangeTimeoutHandler = setTimeout((changeTimestamp) => {
                 if (changeTimestamp === lifeChangeTimestamp) {
+                    console.log(`Hiding life change for player ${index} with value ${lifeChange}`);
                     lifeChangeClass = "hide-me";
+                    recordLifeChangeToHistory();
                     setTimeout(() => {
-                        recordLifeChangeToHistory();
+                        console.log(`Resetting life change indicator for player ${index}`);
                         lifeChange = 0;
                         lifeChangeTimestamp = 0;
                     }, LIFECHANGE_FADEOUT_DURATION_MS);
@@ -120,7 +125,7 @@
     }
 
     $: otherPlayers = $playerDataList
-        .map((p, i) => ({ ...p, index: i }))
+        .map((p, i) => ({...p, index: i}))
         .filter(p => p.index !== index);
 </script>
 
@@ -137,7 +142,7 @@
                         enemyName="{other.name}"
                         enemyColor="{other.color}"
                         enemyColorSecondary="{other.colorSecondary}"
-                        commanderDamageGiven = {commanderDamageGivenList[other.index] || 0}
+                        commanderDamageGiven={commanderDamageGivenList[other.index] || 0}
                         on:addToCommanderDamage/>
             {/each}
         </div>
