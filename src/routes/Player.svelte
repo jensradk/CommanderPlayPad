@@ -8,6 +8,7 @@
         playerDataList,
         addToPlayerLifeTotalHistory,
     } from "./stores";
+    import StopWatch from "./StopWatch.svelte";
 
     const dispatch = createEventDispatcher();
 
@@ -26,15 +27,12 @@
     let lifeChangeClass = "hidden";
     let lifeChange = 0;
     let lifeChangeTimestamp = 0;
-    let initialPulseDone = false;
+    let stopWatch;
 
     $: player = $playerDataList[index];
 
     function clicked() {
         dispatch("updateActivePlayer", {index: index});
-        if (activeClass !== "active-player") {
-            initialPulseDone = false;
-        }
     }
 
     function recordLifeChangeToHistory() {
@@ -58,6 +56,9 @@
                 }
             }, 1000);
             activeClass = "active-player";
+            if (stopWatch) {
+                stopWatch.start();
+            }
         }
     }
 
@@ -65,7 +66,9 @@
         activeTimer = false;
         clearInterval(playerTimerIntervalHandler);
         activeClass = "inactive-player";
-        initialPulseDone = false;
+        if (stopWatch) {
+            stopWatch.stop();
+        }
     }
 
     export function reset() {
@@ -127,6 +130,7 @@
     $: otherPlayers = $playerDataList
         .map((p, i) => ({...p, index: i}))
         .filter(p => p.index !== index);
+
 </script>
 
 <div class="{baseClass} {statusClass} {activeClass} unselectable"
@@ -134,6 +138,34 @@
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div on:click={clicked} role="button" tabindex="0" class="container-all">
+        <!--{#if activeClass === 'active-player'}
+        // Parent.svelte
+        let activePlayerIndex = 0; // or use a store
+
+        <Player
+          index={i}
+          ...otherProps
+          isActive={activePlayerIndex === i}
+          on:updateActivePlayer={e => activePlayerIndex = e.detail.index}
+        />
+
+        <script>
+          export let isActive = false;
+          // ...rest of your code
+        </script>
+
+        {#if isActive}
+          <div class="stopwatch">
+            <StopWatch bind:this={stopWatch} />
+          </div>
+        {/if}
+
+        -->
+            <div class="stopwatch">
+                <StopWatch bind:this={stopWatch} />
+            </div>
+        <!--{/if}-->
+
         <div class="commander-damage-container">
             {#each otherPlayers as other}
                 <CommanderDamage
@@ -156,12 +188,6 @@
                 {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
                 .toString()
                 .padStart(2, "0")}
-            </div>
-            <div class="pulse-line"
-                 class:pulse-line-initial={!initialPulseDone && activeClass === 'active-player'}
-                 class:pulse-line-active={initialPulseDone && activeClass === 'active-player'}
-                 style="background: linear-gradient(90deg, {player.color} 0%, #000 50%, {player.color} 100%);"
-                 on:animationend={() => { initialPulseDone = true; }}>
             </div>
         </div>
 
@@ -204,6 +230,18 @@
         height: 100%;
         display: grid;
         grid-template-rows: 18% 12% 35% 35%;
+        z-index: 1;
+    }
+
+    .stopwatch {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: -1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -45%);
     }
 
     .commander-damage-container {
@@ -239,49 +277,6 @@
         text-align: center;
         margin: 0;
         padding: 0;
-    }
-
-    .pulse-line {
-        width: 60%;
-        height: 0.5vh;
-        margin: 0 auto;
-        border-radius: 10px;
-        opacity: 0;
-        position: relative;
-        left: 0;
-        transition: background 0.3s, opacity 0.3s;
-        filter: brightness(1);
-    }
-
-    .pulse-line-initial {
-        opacity: 1;
-        animation: pulse-width-initial 5s ease-in;
-    }
-
-    @keyframes pulse-width-initial {
-        0% {
-            width: 0;
-        }
-        100% {
-            width: 75%;
-        }
-    }
-
-    .pulse-line-active {
-        opacity: 1;
-        animation: pulse-width 10s ease-in-out infinite;
-    }
-
-    @keyframes pulse-width {
-        0% {
-            width: 75%;
-        }
-        50% {
-            width: 10%;
-        }
-        100% {
-            width: 75%;
-        }
     }
 
     .life-container {
