@@ -41,14 +41,13 @@
     function handleUpdateActivePlayer(event) {
         let playerIndex = event.detail.index;
 
-        for (let i = 0; i < playerList.length; i++) {
-            playerList[i].stopTimer();
-        }
-
         if (activePlayerIndex === playerIndex) {
             playerList[playerIndex].stopTimer();
             activePlayerIndex = -1;
         } else {
+            if (activePlayerIndex >= 0 && activePlayerIndex < playerList.length) {
+                playerList[activePlayerIndex].stopTimer();
+            }
             activePlayerIndex = playerIndex;
             playerList[activePlayerIndex].startTimer();
         }
