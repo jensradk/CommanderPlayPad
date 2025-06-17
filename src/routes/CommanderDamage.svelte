@@ -24,19 +24,6 @@
         <button style="background-color: {enemyColorSecondary}"
                 class="button"
                 on:click={(event) => {
-                        console.log(`Adding to commander damage for player ${playerIndex} against enemy ${enemyIndex}`);
-                        dispatch("addToCommanderDamage", {
-                            playerIndex: playerIndex,
-                            enemyIndex: enemyIndex,
-                            value: 1
-                        });
-                        event.stopPropagation();
-                    }}>
-            +
-        </button>
-        <button style="background-color: {enemyColorSecondary}"
-                class="button"
-                on:click={(event) => {
                         console.log(`Subtracting from commander damage for player ${playerIndex} against enemy ${enemyIndex}`);
                         dispatch("addToCommanderDamage", {
                             playerIndex: playerIndex,
@@ -46,6 +33,19 @@
                         event.stopPropagation();
                     }}>
             -
+        </button>
+        <button style="background-color: {enemyColorSecondary}"
+                class="button"
+                on:click={(event) => {
+                        console.log(`Adding to commander damage for player ${playerIndex} against enemy ${enemyIndex}`);
+                        dispatch("addToCommanderDamage", {
+                            playerIndex: playerIndex,
+                            enemyIndex: enemyIndex,
+                            value: 1
+                        });
+                        event.stopPropagation();
+                    }}>
+            +
         </button>
     </div>
 </div>
