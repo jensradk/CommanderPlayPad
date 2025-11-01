@@ -1,27 +1,24 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
 
-    let opacity = 0;
-    let running = false;
-    let pulsing = false;
-    let rafOpacity;
-    let pulseStart = 0;
-    let opacityMin = 0.1;
-    let opacityMax = 0.5;
-    let pulseDuration = 10000; // Pulse duration in milliseconds
+    let opacityMin = 0.06125;
+    let opacityMax = 1.0;
+    let opacity = opacityMin;
     let rotation = 0;
-    let rotateInterval = null;
+    let rotateIntervalRef = null;
 
     function rotateStart() {
-        rotateStop();
-        rotateInterval = setInterval(() => {
+        console.log("rotate start");
+        rotateIntervalRef = setInterval(() => {
             rotation = (rotation - 6) % 360; // 6° per second
-        }, 1000); // 1000 ms = 1 second
+        }, 1000);
     }
 
     function rotateStop() {
-        if (rotateInterval) clearInterval(rotateInterval);
-        rotateInterval = null;
+        console.log("rotate  stop");
+        if (rotateIntervalRef)
+            clearInterval(rotateIntervalRef);
+        rotateIntervalRef = null;
     }
 
     function fadeTo(target, duration, cb) {
@@ -33,68 +30,33 @@
 
             let t = Math.min((now - startTime) / duration, 1);
             opacity = startVal + (target - startVal) * t;
-            if (t < 1) {
-                rafOpacity = requestAnimationFrame(step);
-            } else {
+            if (t >= 1) {
                 opacity = target;
                 if (cb)
                     cb();
+            } else {
+                requestAnimationFrame(step);
             }
         }
-
-        // cancelAnimations();
-        rafOpacity = requestAnimationFrame(step);
+        requestAnimationFrame(step);
     }
 
-    function pulse(now) {
-        if (!pulsing) return;
-        if (pulseStart === 0) pulseStart = now; // Only set if exactly 0
-        const t = (now - pulseStart) / pulseDuration;
-        opacity = opacityMin + (opacityMax - opacityMin) * 0.5 * (1 + Math.cos(t * Math.PI * 2));
-        rafOpacity = requestAnimationFrame(pulse);
-    }
 
     export function start() {
-        running = true;
-        pulsing = false;
-        pulseStart = 0; // Reset pulseStart
-        // let fadeInDuration = (pulseDuration * 0.5) * (opacityMin / (opacityMax - opacityMin));
-        let fadeInDuration = 775;
-        fadeTo(opacityMax, fadeInDuration, () => {
-            if (running) {
-                pulsing = true;
-                pulseStart = 0; // Ensure pulseStart is reset before pulsing
-                rafOpacity = requestAnimationFrame(pulse);
-            }
-        });
+        console.log("starting")
+        fadeTo(opacityMax, 875);
         rotateStart();
     }
 
     export function stop() {
-        running = false;
-        pulsing = false;
-        fadeTo(0, 225, () => {
-            cancelAnimations();
-            opacity = 0;
-            rotateStop();
-        });
-    }
-
-    onDestroy(() => {
-        running = false;
-        pulsing = false;
-        cancelAnimations();
-    });
-
-    function cancelAnimations() {
-        if (typeof window !== 'undefined') {
-            cancelAnimationFrame(rafOpacity);
-        }
+        console.log("stopping")
+        fadeTo(opacityMin, 275);
+        rotateStop();
     }
 </script>
 
 <div style="opacity: {opacity}; transition: opacity 0.01s;">
-    <svg width="800px" height="800px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
+    <svg width="100%" height="100%" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
          role="img" class="iconify iconify--noto" preserveAspectRatio="xMidYMid meet">
 
         <path fill="#607d8b" d="M68.324 17.126v11.04h-8.71v-11.04z"/>
@@ -158,8 +120,11 @@
 <style>
     div {
         opacity: 1.0;
-        scale: 0.45;
+        scale: 1.0;
         pointer-events: none;
+        width: 100%;
+        height: 100%;
+        display: block;
     }
 </style>
 

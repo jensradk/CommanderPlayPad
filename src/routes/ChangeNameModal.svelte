@@ -25,14 +25,14 @@
 <div class="modal-backdrop" role="button" tabindex="0" on:click={() => dispatch("closeChangeNameModal")}>
 </div>
 <div class="modal">
-    <h3>Type new player name:</h3>
+    <div class="header">Type new player name:</div>
     <input class="new-name-input"
            type="text"
            bind:this={inputEL}
            bind:value={playerName}
            on:keydown={(e) => e.key === "Enter" && submitNameChange()}
     />
-    <button on:click={submitNameChange}>OK</button>
+    <div class="button-ok" on:click={submitNameChange}>OK</div>
 </div>
 
 <style>
@@ -53,16 +53,29 @@
         transform: translate(-50%, -50%);
         background: #aaa;
         padding: 2em;
-        border-radius: 8px;
         z-index: 1001;
         display: flex;
         flex-direction: column;
         gap: 1em;
-        min-width: 200px;
+        width: 1400px;
+        height: 400px;
         align-items: center;
+        border-radius: 16px;
+    }
+
+    .header {
+        font-size: 82px;
     }
 
     .new-name-input {
-        font-size: 2em
+        font-size: 96px;
+    }
+
+    .button-ok {
+        font-size: 72px;
+        border: 2px black solid;
+        border-radius: 15px;
+        padding: 16px 48px;
+        background-color: #ccc;
     }
 </style>
