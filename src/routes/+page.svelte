@@ -25,10 +25,31 @@
     ];
     let activePlayerIndex = -1;
 
+    let rootEl;
+    function scaleToWindow() {
+        const baseWidth = 2048;
+        const baseHeight = 1536;
+
+        // Compute independent scales
+        const scaleX = window.innerWidth / baseWidth;
+        const scaleY = window.innerHeight / baseHeight;
+
+        // No uniform scaling; apply both independently
+        rootEl.style.transform = `scale(${scaleX}, ${scaleY})`;
+        rootEl.style.transformOrigin = "top left";
+
+        // Set the original base size so the transform knows what to scale from
+        rootEl.style.width = baseWidth + "px";
+        rootEl.style.height = baseHeight + "px";
+    }
+
     onMount(() => {
         resetPlayerLifeTotalHistory();
         // resetCommanderDamageGiven();
         setRandomPlayerNames();
+        scaleToWindow();
+        window.addEventListener("resize", scaleToWindow);
+        // return () => window.removeEventListener("resize", scaleToWindow);
     });
 
     function setRandomPlayerNames() {
@@ -110,7 +131,7 @@
 
 </script>
 
-<div class="top">
+<div class="top" bind:this={rootEl}>
     <div class="grid">
         {#each $playerDataList as playerData, i}
             <Player class="{playerBaseClassList[i]}"
@@ -151,9 +172,12 @@
 
 <style>
     .top {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 
     .grid {
@@ -161,8 +185,8 @@
         grid-template-columns: 50% 50%;
         grid-template-rows: 50% 50%;
         gap: 0;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
     }
 
     :global(.unselectable) {

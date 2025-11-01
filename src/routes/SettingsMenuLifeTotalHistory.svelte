@@ -11,21 +11,21 @@
 </script>
 
 <div class="unselectable">
-  <h3>Life total history:</h3>
-  <h4>Click player name to change.</h4>
+  <h3>Life total history</h3>
+  <h4>(click player name to change)</h4>
   <div class="scrollable">
     <div class="life-total-lists-container">
       {#each $playerLifeTotalHistoryList as playerLifeTotalHistory, playerIndex}
         <div class="life-total-list">
           <div class="player-name" on:click={() => openChangeNameModal(playerIndex, playerLifeTotalHistory.name)}>
-            {playerLifeTotalHistory.name}:
+            {playerLifeTotalHistory.name}
           </div>
           <ul>
             {#each playerLifeTotalHistory.entryList as entry}
               {#if entry.lifeChange === 0}
-                <li>Start: {entry.newLifeTotal}</li>
+                <li class="life-change-entry">Start: {entry.newLifeTotal}</li>
               {:else}
-                <li>
+                <li class="life-change-entry">
                   {#if entry.lifeChange > 0}+{/if}{entry.lifeChange} to {entry.newLifeTotal}
                 </li>
               {/if}
@@ -39,6 +39,7 @@
 
 <style>
   .player-name {
+    font-size: 32px;
     text-align: center;
     align-content: center;
     border-bottom: 2px solid white;
@@ -64,9 +65,15 @@
   }
 
   h3,h4 {
+    font-size: 72px;
     margin-top: 5px;
     margin-bottom: 0;
     text-align: center;
+  }
+
+  h4 {
+    font-size: 32px;
+    color: #999999;
   }
 
   .life-total-list {
@@ -75,8 +82,9 @@
   }
 
   ul {
+    font-size: 24px;
     margin-top: 5px;
-    padding: 0px;
+    padding: 0;
     list-style-type: none;
     display: flex;
     flex-direction: column;

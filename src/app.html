@@ -16,6 +16,16 @@
     style="margin: 0px; box-sizing: border-box; background-color: #000000; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"
     data-sveltekit-preload-data="hover"
   >
-    <div style="display: contents">%sveltekit.body%</div>
+    <div class="scaleContainer" style="display: contents">%sveltekit.body%</div>
   </body>
+  <style>
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      overscroll-behavior: none;
+      touch-action: none;
+    }
+  </style>
 </html>

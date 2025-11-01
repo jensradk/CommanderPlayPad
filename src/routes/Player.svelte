@@ -150,15 +150,16 @@
                     on:addToCommanderDamage/>
         {/each}
     </div>
-    <div class="player-name">
-        {player.name}
-    </div>
-
-    <div class="name-and-time-container" role="button" tabindex="0" on:click={timeContainerClicked}>
-        <div class="time-remaining">
-            {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
-            .toString()
-            .padStart(2, "0")}
+    <div class="player-selection-area" role="button" tabindex="0" on:click={timeContainerClicked}>
+        <div class="name-and-time-container">
+            <div class="player-name">
+                {player.name}
+            </div>
+            <div class="time-remaining">
+                {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
+                .toString()
+                .padStart(2, "0")}
+            </div>
         </div>
         <div class="stopwatch">
             <StopWatch bind:this={stopWatch} />
@@ -207,7 +208,7 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 26% 14% 30% 30%;
+        grid-template-rows: 20% 50% 30%;
         z-index: 1;
     }
 
@@ -217,11 +218,28 @@
         margin: 0 auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 0 0.5em;
+    }
+
+    .player-selection-area {
+        display: grid;
+        grid-template-columns: 65% 35%;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    .name-and-time-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        justify-content: space-between;
+        align-items: stretch;
     }
 
     .player-name {
-        font-size: 3em;
+        font-size: 90px;
         text-align: center;
         align-content: center;
         white-space: nowrap;
@@ -231,32 +249,20 @@
         max-height: 100%;
     }
 
-    .name-and-time-container {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
-
     .time-remaining {
-        font-size: 15vh;
+        font-size: 250px;
         text-align: center;
-        padding-left: 20px;
-        padding-right: 10px;
+        /*padding-left: 20px;*/
+        /*padding-right: 10px;*/
+        /*width: 100%;*/
+        /*height: 100%;*/
     }
 
     .stopwatch {
-        width: 100%;
-        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
         pointer-events: none;
-        padding-left: 10px;
-        padding-right: 20px;
     }
 
     .life-container {
@@ -295,7 +301,7 @@
     }
 
     .life-total {
-        font-size: 12vh;
+        font-size: 175px;
         text-align: center;
         z-index: 1;
         margin: 0;
@@ -310,15 +316,15 @@
     }
 
     .life-change-container > div {
-        width: 6vh;
-        height: 6vh;
+        width:  86px;
+        height: 86px;
         border-radius: 50%;
-        transform: translate(-50%, -75%);
+        transform: translate(-50%, -90%);
         background: rgba(200, 200, 200, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 4vh;
+        font-size: 64px;
         color: #000;
         margin: 0;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);

@@ -21,7 +21,7 @@
         </div>
     </div>
     <div class="button-container">
-        <button class="button"
+        <div class="button"
                 on:click={(event) => {
                         console.log(`Subtracting from commander damage for player ${playerIndex} against enemy ${enemyIndex}`);
                         dispatch("addToCommanderDamage", {
@@ -32,8 +32,8 @@
                         event.stopPropagation();
                     }}>
             <span class=button-text>-</span>
-        </button>
-        <button class="button"
+        </div>
+        <div class="button"
                 on:click={(event) => {
                         console.log(`Adding to commander damage for player ${playerIndex} against enemy ${enemyIndex}`);
                         dispatch("addToCommanderDamage", {
@@ -44,17 +44,17 @@
                         event.stopPropagation();
                     }}>
             +
-        </button>
+        </div>
     </div>
 
-    <div class="enemy-info bottom">
-        <div class="enemy-name">
-            From {enemyName}:
-        </div>
-        <div class="enemy-damage">
-            {commanderDamageGiven}
-        </div>
-    </div>
+<!--    <div class="enemy-info bottom">-->
+<!--        <div class="enemy-name">-->
+<!--            From {enemyName}:-->
+<!--        </div>-->
+<!--        <div class="enemy-damage">-->
+<!--            {commanderDamageGiven}-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
 <style>
@@ -113,7 +113,7 @@
 
     .enemy-name {
         /*border: 1px solid black;*/
-        font-size: 1em;
+        font-size: 28px;
         text-align: left;
         white-space: nowrap;
         overflow: hidden;
@@ -127,11 +127,10 @@
     }
 
     .enemy-damage {
-        /*border: 1px solid black;*/
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1em;
+        font-size: 32px;
     }
 
     .button-container {
@@ -141,19 +140,17 @@
         height: 100%;
         position: relative;
         z-index: 0;
-        /*box-sizing: border-box;*/
     }
 
     .button {
         width: 100%;
         height: 100%;
-        min-width: 0;
-        min-height: 0;
-        font-size: 3em;
+        font-size: 96px;
         border: none;
         background: none;
-        opacity: 1;
-        color: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .button + .button {
@@ -164,13 +161,9 @@
         content: "";
         position: absolute;
         left: 0;
-        top: 30%;
-        width: 1px;
-        height: 40%;
+        top: 25%;
+        width: 2px;
+        height: 50%;
         background: black;
-    }
-
-    .button-text {
-        opacity: 1;
     }
 </style>

@@ -9,8 +9,6 @@
     const DEFAULT_STARTING_TIME_MINUTES = 23;
 
     let showSettings = false;
-    let settingsButtonSpinClass = "spin-hidden";
-    let settingsButtonScaleClass = "scale-hidden";
 
     function restartClicked() {
         toggleShowSettings();
@@ -20,12 +18,7 @@
     function toggleShowSettings() {
         showSettings = !showSettings;
         if (showSettings) {
-            settingsButtonSpinClass = "spin-shown";
-            settingsButtonScaleClass = "scale-shown";
             dispatch("showSettings");
-        } else {
-            settingsButtonSpinClass = "spin-hidden";
-            settingsButtonScaleClass = "scale-hidden";
         }
     }
 </script>
@@ -33,8 +26,8 @@
 {#if showSettings}
     <div class="grid-settings unselectable">
         <div class="grid-content">
-            <div>
-                Starting life: <input type="number" bind:value={$startingLifeTotal}/>
+            <div class="setting-description">
+                Starting life: <input class="setting-input" type="number" bind:value={$startingLifeTotal}/>
             </div>
             <div class="value-changer-flex-container">
                 <button
@@ -59,8 +52,8 @@
                 </button
                 >
             </div>
-            <div>
-                Starting time: <input
+            <div class="setting-description">
+                Starting time: <input class="setting-input"
                     type="number"
                     bind:value={$startingTimeLeftMinutes}
             />
@@ -106,7 +99,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div id="settings-button" class="unselectable" on:click={toggleShowSettings}>
     <i
-            class="fa-sharp fa-solid fa-gear {settingsButtonScaleClass} {settingsButtonSpinClass}"
+            class="fa-sharp fa-solid fa-gear spin"
     />
 </div>
 
@@ -118,14 +111,23 @@
         background-color: black;
         color: #d1a215;
         position: fixed;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         z-index: 99;
         opacity: 0.95;
     }
 
     .grid-content {
         margin: auto;
+    }
+
+    .setting-description {
+        font-size: 72px;
+    }
+
+    .setting-input {
+        font-size: 72px;
+        width: 200px;
     }
 
     .value-changer-flex-container {
@@ -136,32 +138,21 @@
     }
 
     .value-changer-button {
-        font-size: 3vh;
+        font-size: 96px;
         border: 2px solid rgba(175, 175, 175, 0.6);
         padding: 15px;
-        width: 30%;
+        /*width: 30%;*/
     }
 
     .restart-button {
-        font-size: 10vh;
+        font-size: 128px;
         border: 2px solid rgba(175, 175, 175, 0.6);
         padding: 20px;
     }
 
-    .scale-shown {
-        scale: 0.75;
-    }
 
-    .scale-hidden {
-        scale: 0.95;
-    }
-
-    .spin-shown {
-        animation: fa-spin 60s infinite linear;
-    }
-
-    .spin-hidden {
-        animation: fa-spin 180s infinite linear;
+    .spin {
+        animation: fa-spin 120s infinite linear;
     }
 
     #settings-button {
@@ -170,14 +161,14 @@
         z-index: 100;
         top: 50%;
         left: 50%;
-        height: 60px;
-        width: 60px;
+        height: 90px;
+        width: 90px;
         transform: translate(-50%, -50%);
-        color: #d1a215;
-        background-color: #403001;
+        color: #aaa;
+        background-color: #333;
         border-radius: 50%;
-        border: 2px solid rgba(175, 175, 175, 0.6);
-        font-size: 55px;
+        border: 2px solid rgb(0, 0, 0);
+        font-size: 80px;
         justify-content: center;
         align-items: center;
     }
