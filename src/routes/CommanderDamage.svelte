@@ -46,6 +46,7 @@
             +
         </button>
     </div>
+
     <div class="enemy-info bottom">
         <div class="enemy-name">
             From {enemyName}:
@@ -54,11 +55,9 @@
             {commanderDamageGiven}
         </div>
     </div>
-
 </div>
 
 <style>
-
     .enemy-info.top,
     .enemy-info.bottom {
         pointer-events: none;
@@ -75,7 +74,6 @@
         /*grid-template-rows: auto 1fr;*/
         width: 100%;
         height: 100%;
-        border-radius: 5px;
         min-width: 0;
         position: relative;
     }
@@ -143,6 +141,7 @@
         height: 100%;
         position: relative;
         z-index: 0;
+        /*box-sizing: border-box;*/
     }
 
     .button {
@@ -151,7 +150,6 @@
         min-width: 0;
         min-height: 0;
         font-size: 3em;
-        border-radius: 5px;
         border: none;
         background: none;
         opacity: 1;

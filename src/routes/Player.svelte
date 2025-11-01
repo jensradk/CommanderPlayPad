@@ -31,7 +31,7 @@
 
     $: player = $playerDataList[index];
 
-    function clicked() {
+    function timeContainerClicked() {
         dispatch("updateActivePlayer", {index: index});
     }
 
@@ -93,7 +93,7 @@
 
         lifeChange = lifeChange + value;
         if (lifeChangeTimestamp === 0) {
-            lifeChangeClass = "show-me";
+            lifeChangeClass = "life-change-indicator-show-me";
         }
         lifeChangeTimestamp = Date.now();
 
@@ -112,7 +112,7 @@
         lifeChangeTimeoutHandler = setTimeout((changeTimestamp) => {
                 if (changeTimestamp === lifeChangeTimestamp) {
                     console.log(`Hiding life change for player ${index} with value ${lifeChange}`);
-                    lifeChangeClass = "hide-me";
+                    lifeChangeClass = "life-change-indicator-hide-me";
                     recordLifeChangeToHistory();
                     setTimeout(() => {
                         console.log(`Resetting life change indicator for player ${index}`);
@@ -137,111 +137,78 @@
      style="background-color: {player.color}"
 >
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div on:click={clicked} role="button" tabindex="0" class="container-all">
-        <!--{#if activeClass === 'active-player'}
-        // Parent.svelte
-        let activePlayerIndex = 0; // or use a store
 
-        <Player
-          index={i}
-          ...otherProps
-          isActive={activePlayerIndex === i}
-          on:updateActivePlayer={e => activePlayerIndex = e.detail.index}
-        />
+    <div class="commander-damage-container">
+        {#each otherPlayers as other}
+            <CommanderDamage
+                    playerIndex={index}
+                    enemyIndex={other.index}
+                    enemyName="{other.name}"
+                    enemyColor="{other.color}"
+                    enemyColorSecondary="{other.colorSecondary}"
+                    commanderDamageGiven={commanderDamageGivenList[other.index] || 0}
+                    on:addToCommanderDamage/>
+        {/each}
+    </div>
+    <div class="player-name">
+        {player.name}
+    </div>
 
-        <script>
-          export let isActive = false;
-          // ...rest of your code
-        </script>
-
-        {#if isActive}
-          <div class="stopwatch">
+    <div class="name-and-time-container" role="button" tabindex="0" on:click={timeContainerClicked}>
+        <div class="time-remaining">
+            {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
+            .toString()
+            .padStart(2, "0")}
+        </div>
+        <div class="stopwatch">
             <StopWatch bind:this={stopWatch} />
-          </div>
-        {/if}
+        </div>
+    </div>
 
-        -->
-            <div class="stopwatch">
-                <StopWatch bind:this={stopWatch} />
+    <div class="life-container">
+        <div style="background-color: {player.colorSecondary}"
+                class="life-change-button"
+                on:click={(event) => {
+                    event.stopPropagation();
+                    addToLife(-1);
+                }}>
+            -
+        </div>
+
+        <div class="life-total-and-change-text">
+            <div class="life-total">
+                {lifeTotal}
             </div>
-        <!--{/if}-->
-
-        <div class="commander-damage-container">
-            {#each otherPlayers as other}
-                <CommanderDamage
-                        playerIndex={index}
-                        enemyIndex={other.index}
-                        enemyName="{other.name}"
-                        enemyColor="{other.color}"
-                        enemyColorSecondary="{other.colorSecondary}"
-                        commanderDamageGiven={commanderDamageGivenList[other.index] || 0}
-                        on:addToCommanderDamage/>
-            {/each}
-        </div>
-
-        <div class="player-name" role="button" tabindex="0">
-            {player.name}
-        </div>
-
-        <div class="time-and-pulse-container">
-            <div class="time-remaining">
-                {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
-                .toString()
-                .padStart(2, "0")}
-            </div>
-        </div>
-
-        <div class="life-container">
-            <button style="background-color: {player.colorSecondary}"
-                    class="life-change-button"
-                    on:click={(event) => {
-                        event.stopPropagation();
-                        addToLife(-1);
-                    }}>
-                -
-            </button>
-
-            <div class="life-total-and-change-text">
-                <div class="life-change-container">
-                    <div class={lifeChangeClass}>
-                        {lifeChange > 0 ? "+" + lifeChange : lifeChange}
-                    </div>
-                </div>
-                <div class="life-total">
-                    {lifeTotal}
+            <div class="life-change-container">
+                <div class={lifeChangeClass}>
+                    {lifeChange > 0 ? "+" + lifeChange : lifeChange}
                 </div>
             </div>
+        </div>
 
-            <button style="background-color: {player.colorSecondary}"
-                    class="life-change-button" on:click={(event) => {
-                        event.stopPropagation();
-                        addToLife(1);
-                    }}>
-                +
-            </button>
+        <div style="background-color: {player.colorSecondary}"
+                class="life-change-button" on:click={(event) => {
+                    event.stopPropagation();
+                    addToLife(1);
+                }}>
+            +
         </div>
     </div>
 </div>
 
 <style>
-    .container-all {
+    .player-field {
+        font-family: sans-serif;
+        align-content: center;
+        align-items: center;
+        justify-content: stretch;
+        border: 2px solid #000000;
         position: relative;
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 18% 12% 35% 35%;
+        grid-template-rows: 26% 14% 30% 30%;
         z-index: 1;
-    }
-
-    .stopwatch {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: -1;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -45%);
     }
 
     .commander-damage-container {
@@ -250,7 +217,7 @@
         margin: 0 auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 0 1em;
+        gap: 0 0.5em;
     }
 
     .player-name {
@@ -261,60 +228,84 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-        display: inline-block;
+        max-height: 100%;
     }
 
-    .time-and-pulse-container {
+    .name-and-time-container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
+        width: 100%;
+        height: 100%;
+        position: relative;
     }
 
     .time-remaining {
-        font-size: 7em;
-        align-content: center;
+        font-size: 15vh;
         text-align: center;
-        margin: 0;
-        padding: 0;
+        padding-left: 20px;
+        padding-right: 10px;
+    }
+
+    .stopwatch {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        padding-left: 10px;
+        padding-right: 20px;
     }
 
     .life-container {
+        width: 100%;
+        height: 100%;
         display: grid;
         grid-template-columns: 35% 30% 35%;
+        align-content: stretch;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
     }
 
     .life-change-button {
-        margin: auto;
-        padding: 0;
-        width: 80%;
-        height: 80%;
-        font-size: 5vh;
-        border-radius: 5px;
-        border: 2px solid rgba(0, 0, 0);
+        min-width: 100%;
+        max-width: 100%;
+        min-height: 100%;
+        max-height: 100%;
+        font-size: 15vh;
+        border: 4px solid rgba(0, 0, 0);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
     }
 
     .life-total-and-change-text {
-        position: relative;
         width: 100%;
         height: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        flex-wrap: nowrap;
+        align-content: flex-end;
+        justify-content: flex-start;
+        align-items: center;
     }
 
     .life-total {
         font-size: 12vh;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -40%);
+        text-align: center;
         z-index: 1;
+        margin: 0;
+        padding: 0;
+        line-height: 1;
     }
 
     .life-change-container {
-        font-size: 4vh;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -175%);
+        width: 0;
+        height: 0;
         z-index: 2;
     }
 
@@ -322,34 +313,24 @@
         width: 6vh;
         height: 6vh;
         border-radius: 50%;
+        transform: translate(-50%, -75%);
         background: rgba(200, 200, 200, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 4vh;
         color: #000;
-        margin: 0 auto;
+        margin: 0;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(0, 0, 0, 0.45)
     }
 
-    .player-field {
-        font-family: sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-content: center;
-        align-items: center;
-        justify-content: space-evenly;
-        border: 2px solid #000000;
-        border-radius: 10px;
-    }
-
-    .show-me {
-        animation: fadeIn ease-out 225ms;
+    .life-change-indicator-show-me {
+        animation: life-change-indicator-fadeIn ease-out 225ms;
         animation-fill-mode: forwards;
     }
 
-    @keyframes fadeOut {
+    @keyframes life-change-indicator-fadeOut {
         0% {
             opacity: 0.75;
             top: 0em;
@@ -363,7 +344,7 @@
         }
     }
 
-    @keyframes fadeIn {
+    @keyframes life-change-indicator-fadeIn {
         0% {
             opacity: 0;
         }
@@ -376,8 +357,8 @@
         opacity: 0;
     }
 
-    .hide-me {
-        animation: fadeOut ease-in 450ms;
+    .life-change-indicator-hide-me {
+        animation: life-change-indicator-fadeOut ease-in 450ms;
         animation-fill-mode: forwards;
     }
 

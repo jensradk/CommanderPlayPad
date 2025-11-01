@@ -9,25 +9,25 @@ export const startingTimeLeftSeconds = derived(
 
 export const playerDataList = writable([
   {
-    name: "John 1",
+    name: "Player 1",
     color: "#3d5a80",
     colorSecondary: "#2b3f59",
     commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "John 2",
+    name: "Player 2",
     color: "#a84a4a",
     colorSecondary: "#7e3838",
     commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "John 3",
+    name: "Player 3",
     color: "#9a983f",
     colorSecondary: "#605e27",
     commanderDamageGivenList: [0, 0, 0, 0],
   },
   {
-    name: "John 4",
+    name: "Player 4",
     color: "#4b9d44",
     colorSecondary: "#2f5d2a",
     commanderDamageGivenList: [0, 0, 0, 0],

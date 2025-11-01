@@ -53,7 +53,6 @@
         transform: translate(-50%, -50%);
         background: #aaa;
         padding: 2em;
-        border-radius: 8px;
         z-index: 1001;
         display: flex;
         flex-direction: column;

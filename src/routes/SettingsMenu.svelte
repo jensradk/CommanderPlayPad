@@ -137,7 +137,6 @@
 
     .value-changer-button {
         font-size: 3vh;
-        border-radius: 10px;
         border: 2px solid rgba(175, 175, 175, 0.6);
         padding: 15px;
         width: 30%;
@@ -145,7 +144,6 @@
 
     .restart-button {
         font-size: 10vh;
-        border-radius: 10px;
         border: 2px solid rgba(175, 175, 175, 0.6);
         padding: 20px;
     }
@@ -177,7 +175,7 @@
         transform: translate(-50%, -50%);
         color: #d1a215;
         background-color: #403001;
-        border-radius: 25px;
+        border-radius: 50%;
         border: 2px solid rgba(175, 175, 175, 0.6);
         font-size: 55px;
         justify-content: center;
