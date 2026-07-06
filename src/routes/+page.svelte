@@ -1,171 +1,67 @@
 <script>
-    import {onMount} from "svelte";
+    import { onMount } from "svelte";
     import Player from "./Player.svelte";
     import SettingsMenu from "./SettingsMenu.svelte";
     import ChangeNameModal from "./ChangeNameModal.svelte";
-    import {nameList} from "./namelist.js";
-    import {get} from "svelte/store";
-    import {
-        startingLifeTotal,
-        startingTimeLeftSeconds,
-        playerDataList,
-        resetPlayerLifeTotalHistory,
-        resetCommanderDamageGiven,
-        setPlayerName,
-        addToPlayerCommanderDamageGiven,
-    } from "./stores";
+    import { nameList } from "./namelist.js";
+    import { game, setPlayerName } from "$lib/game.svelte.js";
 
-    let playerList = [4];
-
-    let playerBaseClassList = [
+    const playerBaseClassList = [
         "player-field upside-down",
         "player-field upside-down",
         "player-field",
         "player-field",
     ];
-    let activePlayerIndex = -1;
 
     let rootEl;
+    let modal = $state(null); // { playerIndex, playerName } | null
+
     function scaleToWindow() {
         const baseWidth = 2048;
         const baseHeight = 1536;
-
-        // Compute independent scales
         const scaleX = window.innerWidth / baseWidth;
         const scaleY = window.innerHeight / baseHeight;
-
-        // No uniform scaling; apply both independently
         rootEl.style.transform = `scale(${scaleX}, ${scaleY})`;
         rootEl.style.transformOrigin = "top left";
-
-        // Set the original base size so the transform knows what to scale from
         rootEl.style.width = baseWidth + "px";
         rootEl.style.height = baseHeight + "px";
     }
 
-    onMount(() => {
-        resetPlayerLifeTotalHistory();
-        // resetCommanderDamageGiven();
-        setRandomPlayerNames();
-        scaleToWindow();
-        window.addEventListener("resize", scaleToWindow);
-        // return () => window.removeEventListener("resize", scaleToWindow);
-    });
-
     function setRandomPlayerNames() {
-        let randomNames = nameList.slice().sort(() => Math.random() - 0.5).slice(0, playerList.length);
-        for (let i = 0; i < playerList.length; i++) {
+        const randomNames = nameList.slice().sort(() => Math.random() - 0.5);
+        for (let i = 0; i < game.players.length; i++) {
             setPlayerName(i, randomNames[i]);
         }
     }
 
-    function handleUpdateActivePlayer(event) {
-        let playerIndex = event.detail.index;
-
-        if (activePlayerIndex === playerIndex) {
-            playerList[playerIndex].stopTimer();
-            activePlayerIndex = -1;
-        } else {
-            if (activePlayerIndex >= 0 && activePlayerIndex < playerList.length) {
-                playerList[activePlayerIndex].stopTimer();
-            }
-            activePlayerIndex = playerIndex;
-            playerList[activePlayerIndex].startTimer();
-        }
-    }
-
-    function handleShowSettings() {
-        for (let i = 0; i < playerList.length; i++) {
-            playerList[i].stopTimer();
-        }
-        activePlayerIndex = -1;
-    }
-
-    function handleRestartGame(event) {
-        for (let i = 0; i < playerList.length; i++) {
-            playerList[i].reset();
-        }
-        resetPlayerLifeTotalHistory();
-        resetCommanderDamageGiven();
-    }
-
-    let changeNameModalShow = false;
-    let changeNameModalExistingName = "";
-    let changeNameModalPlayerIndex = -1;
-
-    function openChangeNameModal(playerIndex, playerName) {
-        changeNameModalExistingName = playerName;
-        changeNameModalPlayerIndex = playerIndex;
-        changeNameModalShow = true;
-    }
-
-    function submitNameChange(index, newName) {
-        if (newName.trim() !== "") {
-            setPlayerName(index, newName.trim());
-        }
-        changeNameModalShow = false;
-    }
-
-    function handleCommanderDamageGiven(event) {
-        let playerIndex = event.detail.playerIndex;
-        let enemyIndex = event.detail.enemyIndex;
-        let damage = event.detail.value;
-        function canAddToCommanderDamage(playerIndex, enemyIndex, damage) {
-            if (enemyIndex >= 0 && enemyIndex < playerList.length) {
-                if (damage > 0) {
-                    return $playerDataList[playerIndex].commanderDamageGivenList[enemyIndex] < 21;
-                } else if (damage < 0) {
-                    return $playerDataList[playerIndex].commanderDamageGivenList[enemyIndex] > 0;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        console.log(`Page: Commander damage given for player ${playerIndex} against enemy ${enemyIndex}`);
-        if (canAddToCommanderDamage(playerIndex, enemyIndex, damage)) {
-            addToPlayerCommanderDamageGiven(playerIndex, enemyIndex, damage);
-            playerList[enemyIndex].addToLife(-damage);
-        }
-    }
-
+    onMount(() => {
+        setRandomPlayerNames();
+        scaleToWindow();
+        window.addEventListener("resize", scaleToWindow);
+        return () => window.removeEventListener("resize", scaleToWindow);
+    });
 </script>
 
 <div class="top" bind:this={rootEl}>
     <div class="grid">
-        {#each $playerDataList as playerData, i}
-            <Player class="{playerBaseClassList[i]}"
-                    index={i}
-                    bind:this={playerList[i]}
-                    baseClass={playerBaseClassList[i]}
-                    lifeTotal={get(startingLifeTotal)}
-                    timeRemaining={get(startingTimeLeftSeconds)}
-                    commanderDamageGivenList={playerData.commanderDamageGivenList}
-                    on:updateActivePlayer={handleUpdateActivePlayer}
-                    on:addToCommanderDamage={handleCommanderDamageGiven}
-            />
+        {#each game.players as _, i}
+            <Player index={i} baseClass={playerBaseClassList[i]} />
         {/each}
 
         <SettingsMenu
-                on:restartGame={handleRestartGame}
-                on:showSettings={handleShowSettings}
-                on:openChangeNameModal={(event) => {
-            console.log(`Page: Opening change name modal for player ${event.detail.playerIndex}: ${event.detail.playerName}`);
-            openChangeNameModal(event.detail.playerIndex, event.detail.playerName);
-        }}
+            onOpenChangeNameModal={(playerIndex, playerName) =>
+                (modal = { playerIndex, playerName })}
         />
     </div>
-    {#if changeNameModalShow}
+    {#if modal}
         <ChangeNameModal
-                playerName={changeNameModalExistingName}
-                playerIndex={changeNameModalPlayerIndex}
-                on:nameChanged={(event) => {
-            console.log(`Name changed for player ${event.detail.playerIndex}: ${event.detail.playerName}`);
-            submitNameChange(event.detail.playerIndex, event.detail.playerName);
-        }}
-                on:closeChangeNameModal={() => {
-            changeNameModalShow = false;
-        }}
+            playerIndex={modal.playerIndex}
+            playerName={modal.playerName}
+            onSubmit={(index, newName) => {
+                setPlayerName(index, newName);
+                modal = null;
+            }}
+            onClose={() => (modal = null)}
         />
     {/if}
 </div>

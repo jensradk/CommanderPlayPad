@@ -1,25 +1,24 @@
 <script>
-    import {createEventDispatcher} from "svelte";
-    import {startingLifeTotal, startingTimeLeftMinutes} from "./stores.js";
+    import { game, restartGame, pauseGame } from "$lib/game.svelte.js";
     import SettingsMenuLifeTotalHistory from "./SettingsMenuLifeTotalHistory.svelte";
 
-    const dispatch = createEventDispatcher();
+    let { onOpenChangeNameModal } = $props();
 
     const DEFAULT_STARTING_LIFE = 40;
     const DEFAULT_STARTING_TIME_MINUTES = 23;
 
-    let showSettings = false;
-
-    function restartClicked() {
-        toggleShowSettings();
-        dispatch("restartGame");
-    }
+    let showSettings = $state(false);
 
     function toggleShowSettings() {
         showSettings = !showSettings;
         if (showSettings) {
-            dispatch("showSettings");
+            pauseGame();
         }
+    }
+
+    function restartClicked() {
+        toggleShowSettings();
+        restartGame();
     }
 </script>
 
@@ -27,68 +26,55 @@
     <div class="grid-settings unselectable">
         <div class="grid-content">
             <div class="setting-description">
-                Starting life: <input class="setting-input" type="number" bind:value={$startingLifeTotal}/>
+                Starting life: <input
+                    class="setting-input"
+                    type="number"
+                    bind:value={game.settings.startingLife}
+                />
             </div>
             <div class="value-changer-flex-container">
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingLifeTotal--;
-        }}>-
-                </button
+                    class="value-changer-button"
+                    onclick={() => game.settings.startingLife--}>-</button
                 >
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingLifeTotal++;
-        }}>+
-                </button
+                    class="value-changer-button"
+                    onclick={() => game.settings.startingLife++}>+</button
                 >
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingLifeTotal = DEFAULT_STARTING_LIFE;
-        }}>Reset
-                </button
+                    class="value-changer-button"
+                    onclick={() => (game.settings.startingLife = DEFAULT_STARTING_LIFE)}
+                    >Reset</button
                 >
             </div>
             <div class="setting-description">
-                Starting time: <input class="setting-input"
+                Starting time: <input
+                    class="setting-input"
                     type="number"
-                    bind:value={$startingTimeLeftMinutes}
-            />
+                    bind:value={game.settings.startingTimeMinutes}
+                />
             </div>
             <div class="value-changer-flex-container">
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingTimeLeftMinutes--;
-        }}>-
-                </button
+                    class="value-changer-button"
+                    onclick={() => game.settings.startingTimeMinutes--}>-</button
                 >
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingTimeLeftMinutes++;
-        }}>+
-                </button
+                    class="value-changer-button"
+                    onclick={() => game.settings.startingTimeMinutes++}>+</button
                 >
                 <button
-                        class="value-changer-button"
-                        on:click={() => {
-          $startingTimeLeftMinutes = DEFAULT_STARTING_TIME_MINUTES;
-        }}>Reset
-                </button
+                    class="value-changer-button"
+                    onclick={() =>
+                        (game.settings.startingTimeMinutes =
+                            DEFAULT_STARTING_TIME_MINUTES)}>Reset</button
                 >
             </div>
         </div>
-        <SettingsMenuLifeTotalHistory
-                on:openChangeNameModal
-        />
+        <SettingsMenuLifeTotalHistory {onOpenChangeNameModal} />
         <div class="grid-content">
-            <button class="restart-button" on:click={restartClicked}
-            ><i class="fa fa-refresh"/>Restart
-            </button
+            <button class="restart-button" onclick={restartClicked}
+                ><i class="fa fa-refresh"></i>Restart</button
             >
         </div>
         <div class="grid-content">
@@ -96,11 +82,10 @@
         </div>
     </div>
 {/if}
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div id="settings-button" class="unselectable" on:click={toggleShowSettings}>
-    <i
-            class="fa-sharp fa-solid fa-gear spin"
-    />
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div id="settings-button" class="unselectable" onclick={toggleShowSettings}>
+    <i class="fa-sharp fa-solid fa-gear spin"></i>
 </div>
 
 <style>

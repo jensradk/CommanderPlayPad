@@ -1,38 +1,34 @@
 <script>
-    import {createEventDispatcher} from 'svelte';
-    import {onMount} from 'svelte';
+    let { playerIndex, playerName, onSubmit, onClose } = $props();
 
-    const dispatch = createEventDispatcher();
-
-    export let playerIndex;
-    export let playerName;
-
-    let inputEL;
+    let name = $state(playerName);
+    let inputEl;
 
     function submitNameChange() {
-        console.log(`Submitting name change for player ${playerIndex}: ${playerName}`);
-        if (playerName.trim()) {
-            dispatch('nameChanged', {playerIndex: playerIndex, playerName: playerName.trim()});
+        if (name.trim()) {
+            onSubmit(playerIndex, name.trim());
         }
     }
 
-    onMount(() => {
-        inputEL.focus();
-        inputEL.select();
+    $effect(() => {
+        inputEl?.focus();
+        inputEl?.select();
     });
 </script>
 
-<div class="modal-backdrop" role="button" tabindex="0" on:click={() => dispatch("closeChangeNameModal")}>
-</div>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="modal-backdrop" role="button" tabindex="0" onclick={onClose}></div>
 <div class="modal">
     <div class="header">Type new player name:</div>
-    <input class="new-name-input"
-           type="text"
-           bind:this={inputEL}
-           bind:value={playerName}
-           on:keydown={(e) => e.key === "Enter" && submitNameChange()}
+    <input
+        class="new-name-input"
+        type="text"
+        bind:this={inputEl}
+        bind:value={name}
+        onkeydown={(e) => e.key === "Enter" && submitNameChange()}
     />
-    <div class="button-ok" on:click={submitNameChange}>OK</div>
+    <div class="button-ok" onclick={submitNameChange}>OK</div>
 </div>
 
 <style>

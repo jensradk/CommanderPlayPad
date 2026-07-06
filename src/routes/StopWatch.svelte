@@ -1,61 +1,14 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    let { running = false, elapsedSeconds = 0 } = $props();
 
-    let opacityMin = 0.06125;
-    let opacityMax = 1.0;
-    let opacity = opacityMin;
-    let rotation = 0;
-    let rotateIntervalRef = null;
-
-    function rotateStart() {
-        console.log("rotate start");
-        rotateIntervalRef = setInterval(() => {
-            rotation = (rotation - 6) % 360; // 6° per second
-        }, 1000);
-    }
-
-    function rotateStop() {
-        console.log("rotate  stop");
-        if (rotateIntervalRef)
-            clearInterval(rotateIntervalRef);
-        rotateIntervalRef = null;
-    }
-
-    function fadeTo(target, duration, cb) {
-        let startVal = opacity;
-        let startTime;
-        function step(now) {
-            if (!startTime)
-                startTime = now;
-
-            let t = Math.min((now - startTime) / duration, 1);
-            opacity = startVal + (target - startVal) * t;
-            if (t >= 1) {
-                opacity = target;
-                if (cb)
-                    cb();
-            } else {
-                requestAnimationFrame(step);
-            }
-        }
-        requestAnimationFrame(step);
-    }
-
-
-    export function start() {
-        console.log("starting")
-        fadeTo(opacityMax, 875);
-        rotateStart();
-    }
-
-    export function stop() {
-        console.log("stopping")
-        fadeTo(opacityMin, 275);
-        rotateStop();
-    }
+    let rotation = $derived(-((elapsedSeconds * 6) % 360));
 </script>
 
-<div style="opacity: {opacity}; transition: opacity 0.01s;">
+<div
+    style="opacity: {running ? 1.0 : 0.06125}; transition: opacity {running
+        ? 875
+        : 275}ms ease;"
+>
     <svg width="100%" height="100%" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
          role="img" class="iconify iconify--noto" preserveAspectRatio="xMidYMid meet">
 
