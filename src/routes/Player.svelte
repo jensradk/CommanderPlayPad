@@ -227,22 +227,22 @@
     .poison-container {
         display: flex;
         align-items: center;
-        gap: 24px;
-        font-size: 52px;
+        gap: 12px;
+        font-size: 44px;
     }
 
     .poison-button {
-        width: 90px;
-        height: 90px;
+        width: 72px;
+        height: 72px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 72px;
+        font-size: 56px;
         border: 2px solid rgba(0, 0, 0, 0.5);
     }
 
     .poison-count {
-        min-width: 150px;
+        min-width: 110px;
         text-align: center;
     }
 
@@ -252,7 +252,7 @@
         z-index: 1;
         margin: 0;
         padding: 0;
-        line-height: 1;
+        line-height: 0.8;
     }
 
     .life-change-container {
