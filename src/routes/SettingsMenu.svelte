@@ -77,9 +77,7 @@
                 ><i class="fa fa-refresh"></i>Restart</button
             >
         </div>
-        <div class="grid-content">
-            <p>Space reserved for future use...perhaps just extend the life total history?</p>
-        </div>
+        <div class="grid-content"></div>
     </div>
 {/if}
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -93,13 +91,12 @@
         display: grid;
         grid-template-columns: 50% 50%;
         grid-template-rows: 50% 50%;
-        background-color: black;
-        color: #d1a215;
+        background-color: rgba(11, 12, 14, 0.97);
+        color: #f2f2f2;
         position: fixed;
         width: 100%;
         height: 100%;
         z-index: 99;
-        opacity: 0.95;
     }
 
     .grid-content {
@@ -113,6 +110,10 @@
     .setting-input {
         font-size: 72px;
         width: 200px;
+        background: #1c1e22;
+        color: #f2f2f2;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
     }
 
     .value-changer-flex-container {
@@ -124,14 +125,14 @@
 
     .value-changer-button {
         font-size: 96px;
-        border: 2px solid rgba(175, 175, 175, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 12px; background: #1c1e22; color: #f2f2f2;
         padding: 15px;
         /*width: 30%;*/
     }
 
     .restart-button {
         font-size: 128px;
-        border: 2px solid rgba(175, 175, 175, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 12px; background: #1c1e22; color: #f2f2f2;
         padding: 20px;
     }
 
@@ -149,10 +150,10 @@
         height: 90px;
         width: 90px;
         transform: translate(-50%, -50%);
-        color: #aaa;
-        background-color: #333;
+        color: #9aa0a6;
+        background-color: #1c1e22;
         border-radius: 50%;
-        border: 2px solid rgb(0, 0, 0);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         font-size: 80px;
         justify-content: center;
         align-items: center;

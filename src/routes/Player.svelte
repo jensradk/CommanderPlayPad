@@ -121,6 +121,15 @@
                     +
                 </div>
             </div>
+            {#if dead}
+                <div class="death-cause">
+                    {player.poison >= 10
+                        ? "☠ poisoned"
+                        : player.timeRemainingSeconds <= 0
+                          ? "⏱ out of time"
+                          : "0 life"}
+                </div>
+            {/if}
         </div>
 
         <div
@@ -138,11 +147,10 @@
 
 <style>
     .player-field {
-        font-family: sans-serif;
         align-content: center;
         align-items: center;
         justify-content: stretch;
-        border: 2px solid #000000;
+        border: 1px solid rgba(255, 255, 255, 0.10);
         position: relative;
         width: 100%;
         height: 100%;
@@ -191,10 +199,7 @@
     .time-remaining {
         font-size: 250px;
         text-align: center;
-        /*padding-left: 20px;*/
-        /*padding-right: 10px;*/
-        /*width: 100%;*/
-        /*height: 100%;*/
+        font-variant-numeric: tabular-nums;
     }
 
     .stopwatch {
@@ -221,7 +226,8 @@
         min-height: 100%;
         max-height: 100%;
         font-size: 15vh;
-        border: 4px solid rgba(0, 0, 0);
+        border: none;
+        color: #f2f2f2;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -252,7 +258,7 @@
         align-items: center;
         justify-content: center;
         font-size: 56px;
-        border: 2px solid rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.18);
     }
 
     .poison-count {
@@ -267,6 +273,7 @@
         margin: 0;
         padding: 0;
         line-height: 0.8;
+        font-variant-numeric: tabular-nums;
     }
 
     .life-change-container {
@@ -280,15 +287,15 @@
         height: 86px;
         border-radius: 50%;
         transform: translate(-50%, -90%);
-        background: rgba(200, 200, 200, 0.4);
+        background: rgba(255, 255, 255, 0.18);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 64px;
-        color: #000;
+        color: #f2f2f2;
         margin: 0;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(0, 0, 0, 0.45)
+        border: 1px solid rgba(255, 255, 255, 0.25);
     }
 
     .life-change-indicator-show-me {
@@ -348,5 +355,20 @@
 
     .upside-down {
         rotate: 180deg;
+    }
+
+    .active-player {
+        filter: brightness(1.18);
+        outline: 4px solid #e8c35a;
+        outline-offset: -4px;
+    }
+
+    .dead-player {
+        filter: grayscale(0.85) brightness(0.55);
+    }
+
+    .death-cause {
+        font-size: 40px;
+        color: #9aa0a6;
     }
 </style>

@@ -7,10 +7,10 @@ const LIFECHANGE_SHOW_MS = 8000;
 const DEFAULT_SETTINGS = { startingLife: 40, startingTimeMinutes: 23 };
 
 const PLAYER_COLORS = [
-  { color: "#3d5a80", colorSecondary: "#2b3f59" },
-  { color: "#a84a4a", colorSecondary: "#7e3838" },
-  { color: "#9a983f", colorSecondary: "#605e27" },
-  { color: "#4b9d44", colorSecondary: "#2f5d2a" },
+  { color: "#33465c", colorSecondary: "#24313f" },
+  { color: "#5c3838", colorSecondary: "#3f2626" },
+  { color: "#56532e", colorSecondary: "#3a3820" },
+  { color: "#395639", colorSecondary: "#263c26" },
 ];
 
 function createPlayer(index, settings) {

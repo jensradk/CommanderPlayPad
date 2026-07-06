@@ -53,7 +53,8 @@
     }
 
     .container {
-        border: 1px solid black;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        color: #f2f2f2;
         width: 100%;
         height: 100%;
         min-width: 0;
@@ -133,6 +134,6 @@
         top: 25%;
         width: 2px;
         height: 50%;
-        background: black;
+        background: rgba(255, 255, 255, 0.15);
     }
 </style>

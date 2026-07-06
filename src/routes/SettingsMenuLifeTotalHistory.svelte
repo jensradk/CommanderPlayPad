@@ -41,7 +41,7 @@
         font-size: 32px;
         text-align: center;
         align-content: center;
-        border-bottom: 2px solid white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -72,7 +72,7 @@
 
     h4 {
         font-size: 32px;
-        color: #999999;
+        color: #9aa0a6;
     }
 
     .life-total-list {

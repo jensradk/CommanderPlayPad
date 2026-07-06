@@ -47,7 +47,9 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: #aaa;
+        background: #1c1e22;
+        color: #f2f2f2;
+        border: 1px solid rgba(255, 255, 255, 0.18);
         padding: 2em;
         z-index: 1001;
         display: flex;
@@ -65,13 +67,17 @@
 
     .new-name-input {
         font-size: 96px;
+        background: #0b0c0e;
+        color: #f2f2f2;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
     }
 
     .button-ok {
         font-size: 72px;
-        border: 2px black solid;
+        border: 1px solid rgba(255, 255, 255, 0.18);
         border-radius: 15px;
         padding: 16px 48px;
-        background-color: #ccc;
+        background-color: #24313f;
     }
 </style>
