@@ -49,8 +49,11 @@ const lifeChangeFadeTimeouts = [null, null, null, null];
 
 export function addToLife(index, delta) {
   const player = game.players[index];
-  player.life += delta;
-  player.pendingLifeChange += delta;
+  const newLife = Math.max(0, player.life + delta);
+  const applied = newLife - player.life;
+  if (applied === 0) return;
+  player.life = newLife;
+  player.pendingLifeChange += applied;
   player.lifeChangePhase = "shown";
 
   clearTimeout(lifeChangeShowTimeouts[index]);
