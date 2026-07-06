@@ -1,4 +1,4 @@
-import { game } from "./game.svelte.js";
+import { game, PLAYER_COLORS } from "./game.svelte.js";
 
 const GAME_KEY = "commanderplaypad.game.v1";
 const SETTINGS_KEY = "commanderplaypad.settings.v1";
@@ -9,11 +9,17 @@ export function loadSavedState() {
     if (settingsJson) {
       Object.assign(game.settings, JSON.parse(settingsJson));
     }
+  } catch {
+    // corrupt settings: keep defaults, still try to restore the game
+  }
+  try {
     const gameJson = localStorage.getItem(GAME_KEY);
     if (!gameJson) return false;
     const saved = JSON.parse(gameJson);
-    game.players = saved.players.map((p) => ({
+    game.players = saved.players.map((p, i) => ({
       ...p,
+      // colors are code-owned: re-apply the current palette, never the saved one
+      ...PLAYER_COLORS[i],
       // never restore a mid-fade bubble; its timeout died with the old page
       pendingLifeChange: 0,
       lifeChangePhase: "hidden",
@@ -30,7 +36,10 @@ export function loadSavedState() {
 export function saveGame() {
   localStorage.setItem(
     GAME_KEY,
-    JSON.stringify({ players: game.players, monarchIndex: game.monarchIndex })
+    JSON.stringify({
+      players: game.players.map(({ color, colorSecondary, ...rest }) => rest),
+      monarchIndex: game.monarchIndex,
+    })
   );
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(game.settings));
 }

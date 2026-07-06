@@ -6,7 +6,7 @@ const LIFECHANGE_SHOW_MS = 8000;
 
 const DEFAULT_SETTINGS = { startingLife: 40, startingTimeMinutes: 23 };
 
-const PLAYER_COLORS = [
+export const PLAYER_COLORS = [
   { color: "#33465c", colorSecondary: "#24313f" },
   { color: "#5c3838", colorSecondary: "#3f2626" },
   { color: "#56532e", colorSecondary: "#3a3820" },
