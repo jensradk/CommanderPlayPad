@@ -1,7 +1,7 @@
 <script>
     import CommanderDamage from "./CommanderDamage.svelte";
     import StopWatch from "./StopWatch.svelte";
-    import { game, isDead, addToLife, setActivePlayer } from "$lib/game.svelte.js";
+    import { game, isDead, addToLife, addPoison, setActivePlayer } from "$lib/game.svelte.js";
 
     let { index, baseClass } = $props();
 
@@ -84,6 +84,27 @@
                     {player.pendingLifeChange > 0
                         ? "+" + player.pendingLifeChange
                         : player.pendingLifeChange}
+                </div>
+            </div>
+            <div class="poison-container">
+                <div
+                    class="poison-button"
+                    onclick={(event) => {
+                        event.stopPropagation();
+                        addPoison(index, -1);
+                    }}
+                >
+                    -
+                </div>
+                <div class="poison-count">☠ {player.poison}</div>
+                <div
+                    class="poison-button"
+                    onclick={(event) => {
+                        event.stopPropagation();
+                        addPoison(index, 1);
+                    }}
+                >
+                    +
                 </div>
             </div>
         </div>
@@ -197,11 +218,32 @@
         width: 100%;
         height: 100%;
         display: flex;
-        flex-direction: column-reverse;
-        flex-wrap: nowrap;
-        align-content: flex-end;
-        justify-content: flex-start;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .poison-container {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        font-size: 52px;
+    }
+
+    .poison-button {
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 72px;
+        border: 2px solid rgba(0, 0, 0, 0.5);
+    }
+
+    .poison-count {
+        min-width: 150px;
+        text-align: center;
     }
 
     .life-total {
