@@ -28,7 +28,7 @@
         bind:value={name}
         onkeydown={(e) => e.key === "Enter" && submitNameChange()}
     />
-    <div class="button-ok" onclick={submitNameChange}>OK</div>
+    <div class="button-ok" role="button" tabindex="0" onclick={submitNameChange} onkeydown={(e) => (e.key === "Enter" || e.key === " ") && submitNameChange()}>OK</div>
 </div>
 
 <style>
