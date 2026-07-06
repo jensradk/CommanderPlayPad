@@ -1,7 +1,8 @@
 <script>
     import CommanderDamage from "./CommanderDamage.svelte";
     import StopWatch from "./StopWatch.svelte";
-    import { game, isDead, addToLife, addPoison, setActivePlayer } from "$lib/game.svelte.js";
+    import Crown from "./Crown.svelte";
+    import { game, isDead, addToLife, addPoison, setActivePlayer, setMonarch } from "$lib/game.svelte.js";
 
     let { index, baseClass } = $props();
 
@@ -25,6 +26,8 @@
             .map((p, i) => ({ player: p, index: i }))
             .filter((entry) => entry.index !== index)
     );
+
+    let monarch = $derived(game.monarchIndex === index);
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -32,7 +35,7 @@
 <div
     class="{baseClass} {dead ? 'dead-player' : 'alive-player'} {active
         ? 'active-player'
-        : 'inactive-player'} unselectable"
+        : 'inactive-player'} {monarch ? 'monarch-player' : ''} unselectable"
     style="background-color: {player.color}"
 >
     <div class="commander-damage-container">
@@ -47,8 +50,19 @@
         onclick={() => setActivePlayer(index)}
     >
         <div class="name-and-time-container">
-            <div class="player-name">
-                {player.name}
+            <div class="name-row">
+                <div
+                    class="crown-button"
+                    onclick={(event) => {
+                        event.stopPropagation();
+                        setMonarch(index);
+                    }}
+                >
+                    <Crown filled={monarch} />
+                </div>
+                <div class="player-name">
+                    {player.name}
+                </div>
             </div>
             <div class="time-remaining">
                 {Math.floor(player.timeRemainingSeconds / 60)}:{(
@@ -312,6 +326,24 @@
     .life-change-indicator-hide-me {
         animation: life-change-indicator-fadeOut ease-in 450ms;
         animation-fill-mode: forwards;
+    }
+
+    .name-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        max-width: 100%;
+    }
+
+    .crown-button {
+        width: 90px;
+        height: 90px;
+        flex: 0 0 auto;
+    }
+
+    .monarch-player {
+        box-shadow: inset 0 0 0 6px rgba(232, 195, 90, 0.55);
     }
 
     .upside-down {
