@@ -5,6 +5,7 @@
     import ChangeNameModal from "./ChangeNameModal.svelte";
     import { nameList } from "./namelist.js";
     import { game, setPlayerName } from "$lib/game.svelte.js";
+    import { loadSavedState, saveGame } from "$lib/persistence.svelte.js";
 
     const playerBaseClassList = [
         "player-field upside-down",
@@ -35,10 +36,17 @@
     }
 
     onMount(() => {
-        setRandomPlayerNames();
+        const restored = loadSavedState();
+        if (!restored) {
+            setRandomPlayerNames();
+        }
         scaleToWindow();
         window.addEventListener("resize", scaleToWindow);
         return () => window.removeEventListener("resize", scaleToWindow);
+    });
+
+    $effect(() => {
+        saveGame(); // JSON.stringify reads all game state -> effect reruns on any change
     });
 </script>
 
