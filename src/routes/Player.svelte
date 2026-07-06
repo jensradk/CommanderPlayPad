@@ -1,197 +1,101 @@
 <script>
-    import {createEventDispatcher} from "svelte";
-    import {get} from "svelte/store";
     import CommanderDamage from "./CommanderDamage.svelte";
-    import {
-        startingLifeTotal,
-        startingTimeLeftSeconds,
-        playerDataList,
-        addToPlayerLifeTotalHistory,
-    } from "./stores";
     import StopWatch from "./StopWatch.svelte";
+    import { game, isDead, addToLife, setActivePlayer } from "$lib/game.svelte.js";
 
-    const dispatch = createEventDispatcher();
+    let { index, baseClass } = $props();
 
-    const LIFECHANGE_FADEOUT_DURATION_MS = 2000;
-    const LIFECHANGE_SHOW_DURATION_MS = 10000 - LIFECHANGE_FADEOUT_DURATION_MS;
+    let player = $derived(game.players[index]);
+    let dead = $derived(isDead(player));
+    let active = $derived(game.activePlayerIndex === index);
+    let elapsedSeconds = $derived(
+        game.settings.startingTimeMinutes * 60 - player.timeRemainingSeconds
+    );
 
-    export let index;
-    export let lifeTotal;
-    export let timeRemaining;
-    export let baseClass;
-    export let commanderDamageGivenList;
+    let lifeChangeClass = $derived(
+        player.lifeChangePhase === "shown"
+            ? "life-change-indicator-show-me"
+            : player.lifeChangePhase === "fading"
+              ? "life-change-indicator-hide-me"
+              : "hidden"
+    );
 
-    let activeTimer = false;
-    let statusClass = "alive-player";
-    let activeClass = "inactive-player";
-    let lifeChangeClass = "hidden";
-    let lifeChange = 0;
-    let lifeChangeTimestamp = 0;
-    let stopWatch;
-
-    $: player = $playerDataList[index];
-
-    function timeContainerClicked() {
-        dispatch("updateActivePlayer", {index: index});
-    }
-
-    function recordLifeChangeToHistory() {
-        if (lifeChange !== 0) {
-            addToPlayerLifeTotalHistory(index, {
-                lifeChange: lifeChange,
-                newLifeTotal: lifeTotal,
-            });
-        }
-    }
-
-    let playerTimerIntervalHandler = null;
-
-    export function startTimer() {
-        if (!isDead() && timeRemaining > 0) {
-            activeTimer = true;
-            playerTimerIntervalHandler = setInterval(() => {
-                timeRemaining--;
-                if (timeRemaining === 0) {
-                    addToLife(-lifeTotal);
-                }
-            }, 1000);
-            activeClass = "active-player";
-            if (stopWatch) {
-                stopWatch.start();
-            }
-        }
-    }
-
-    export function stopTimer() {
-        activeTimer = false;
-        clearInterval(playerTimerIntervalHandler);
-        activeClass = "inactive-player";
-        if (stopWatch) {
-            stopWatch.stop();
-        }
-    }
-
-    export function reset() {
-        activeTimer = false;
-        clearInterval(playerTimerIntervalHandler);
-        clearTimeout(lifeChangeTimeoutHandler);
-        lifeChangeClass = "hidden";
-        lifeTotal = get(startingLifeTotal);
-        timeRemaining = get(startingTimeLeftSeconds);
-        statusClass = "alive-player";
-        activeClass = "inactive-player";
-    }
-
-    function isDead() {
-        return lifeTotal <= 0;
-    }
-
-    let lifeChangeTimeoutHandler = null;
-
-    export function addToLife(value) {
-        lifeTotal += value;
-
-        lifeChange = lifeChange + value;
-        if (lifeChangeTimestamp === 0) {
-            lifeChangeClass = "life-change-indicator-show-me";
-        }
-        lifeChangeTimestamp = Date.now();
-
-        if (lifeTotal <= 0) {
-            stopTimer();
-            statusClass = "dead-player";
-        } else if (lifeTotal > 0) {
-            statusClass = "alive-player";
-        }
-
-        /*
-            This sets a timeout that hides the lifeChange.
-            Only allow the hiding if the timestamp is unchanged since the timeout started.
-            This makes sure that only the last timeout does something
-         */
-        lifeChangeTimeoutHandler = setTimeout((changeTimestamp) => {
-                if (changeTimestamp === lifeChangeTimestamp) {
-                    console.log(`Hiding life change for player ${index} with value ${lifeChange}`);
-                    lifeChangeClass = "life-change-indicator-hide-me";
-                    recordLifeChangeToHistory();
-                    setTimeout(() => {
-                        console.log(`Resetting life change indicator for player ${index}`);
-                        lifeChange = 0;
-                        lifeChangeTimestamp = 0;
-                    }, LIFECHANGE_FADEOUT_DURATION_MS);
-                }
-            },
-            LIFECHANGE_SHOW_DURATION_MS,
-            lifeChangeTimestamp
-        );
-        return lifeTotal;
-    }
-
-    $: otherPlayers = $playerDataList
-        .map((p, i) => ({...p, index: i}))
-        .filter(p => p.index !== index);
-
+    let otherPlayers = $derived(
+        game.players
+            .map((p, i) => ({ player: p, index: i }))
+            .filter((entry) => entry.index !== index)
+    );
 </script>
 
-<div class="{baseClass} {statusClass} {activeClass} unselectable"
-     style="background-color: {player.color}"
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+    class="{baseClass} {dead ? 'dead-player' : 'alive-player'} {active
+        ? 'active-player'
+        : 'inactive-player'} unselectable"
+    style="background-color: {player.color}"
 >
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-
     <div class="commander-damage-container">
         {#each otherPlayers as other}
-            <CommanderDamage
-                    playerIndex={index}
-                    enemyIndex={other.index}
-                    enemyName="{other.name}"
-                    enemyColor="{other.color}"
-                    enemyColorSecondary="{other.colorSecondary}"
-                    commanderDamageGiven={commanderDamageGivenList[other.index] || 0}
-                    on:addToCommanderDamage/>
+            <CommanderDamage playerIndex={index} enemyIndex={other.index} />
         {/each}
     </div>
-    <div class="player-selection-area" role="button" tabindex="0" on:click={timeContainerClicked}>
+    <div
+        class="player-selection-area"
+        role="button"
+        tabindex="0"
+        onclick={() => setActivePlayer(index)}
+    >
         <div class="name-and-time-container">
             <div class="player-name">
                 {player.name}
             </div>
             <div class="time-remaining">
-                {Math.floor(timeRemaining / 60)}:{(timeRemaining % 60)
-                .toString()
-                .padStart(2, "0")}
+                {Math.floor(player.timeRemainingSeconds / 60)}:{(
+                    player.timeRemainingSeconds % 60
+                )
+                    .toString()
+                    .padStart(2, "0")}
             </div>
         </div>
         <div class="stopwatch">
-            <StopWatch bind:this={stopWatch} />
+            <StopWatch running={active} {elapsedSeconds} />
         </div>
     </div>
 
     <div class="life-container">
-        <div style="background-color: {player.colorSecondary}"
-                class="life-change-button"
-                on:click={(event) => {
-                    event.stopPropagation();
-                    addToLife(-1);
-                }}>
+        <div
+            style="background-color: {player.colorSecondary}"
+            class="life-change-button"
+            onclick={(event) => {
+                event.stopPropagation();
+                addToLife(index, -1);
+            }}
+        >
             -
         </div>
 
         <div class="life-total-and-change-text">
             <div class="life-total">
-                {lifeTotal}
+                {player.life}
             </div>
             <div class="life-change-container">
                 <div class={lifeChangeClass}>
-                    {lifeChange > 0 ? "+" + lifeChange : lifeChange}
+                    {player.pendingLifeChange > 0
+                        ? "+" + player.pendingLifeChange
+                        : player.pendingLifeChange}
                 </div>
             </div>
         </div>
 
-        <div style="background-color: {player.colorSecondary}"
-                class="life-change-button" on:click={(event) => {
-                    event.stopPropagation();
-                    addToLife(1);
-                }}>
+        <div
+            style="background-color: {player.colorSecondary}"
+            class="life-change-button"
+            onclick={(event) => {
+                event.stopPropagation();
+                addToLife(index, 1);
+            }}
+        >
             +
         </div>
     </div>
